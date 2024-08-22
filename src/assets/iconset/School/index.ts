@@ -1,0 +1,14 @@
+export { default as ActivityIconSet } from "./activity";
+export { default as AwardIconSet } from "./award";
+export { default as BookIconSet } from "./book";
+export { default as BriefcaseIconSet } from "./briefcase";
+export { default as CalculatorIconSet } from "./calculator";
+export { default as Chart1IconSet } from "./chart";
+export { default as ClipboardIconSet } from "./clipboard";
+export { default as DiagramIconSet } from "./diagram";
+export { default as GiftIconSet } from "./gift";
+export { default as GraphIconSet } from "./graph";
+export { default as StatusUpIconSet } from "./status-up";
+export { default as TeacherIconSet } from "./teacher";
+export { default as TrendDownIconSet } from "./trend-down";
+export { default as TrendUpIconSet } from "./trend-up";

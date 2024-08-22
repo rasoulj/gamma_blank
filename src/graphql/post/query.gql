@@ -1,0 +1,30 @@
+# query post_getPosts(
+#   $where: PostFilterInput
+#   $take: Int
+#   $order: [PostSortInput!]
+# ) {
+#   post_getPosts {
+#     result(where: $where, take: $take, order: $order) {
+#       items {
+#         id
+#         content
+#         likes
+#         isLiked
+#         user {
+#           fullName
+#           createdDate
+#           photoUrl
+#         }
+#         community {
+#           id
+#           title
+#         }
+#         mediaUrl
+#         hashTags
+#         comments {
+#           id
+#         }
+#       }
+#     }
+#   }
+# }

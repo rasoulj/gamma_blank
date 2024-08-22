@@ -1,0 +1,5 @@
+# mutation chat_createChat($input: ChatInput!) {
+#   chat_createChat(input: $input) {
+#     status
+#   }
+# }

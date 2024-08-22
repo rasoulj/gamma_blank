@@ -1,0 +1,60 @@
+# query user_getUsers(
+#   $skip: Int
+#   $take: Int
+#   $where: UserFilterInput
+#   $order: [UserSortInput!]
+# ) {
+#   user_getUsers {
+#     result(skip: $skip, take: $take, where: $where, order: $order) {
+#       items {
+#         fullName
+#         bio
+#         photoUrl
+#         externalId
+#         email
+#         id
+#         isDeleted
+#         createdDate
+#         lastModifiedDate
+#       }
+#       pageInfo {
+#         hasNextPage
+#         hasPreviousPage
+#       }
+#       totalCount
+#     }
+#     status
+#   }
+# }
+
+# query userDirectMessage_getUserDirectMessagesByCurrentUser(
+#   $skip: Int
+#   $take: Int
+#   $where: UserDirectMessageFilterInput
+#   $order: [UserDirectMessageSortInput!]
+# ) {
+#   userDirectMessage_getUserDirectMessagesByCurrentUser {
+#     result(skip: $skip, take: $take, where: $where, order: $order) {
+#       items {
+#         senderUserId
+#         reciverUserId
+#         id
+#         isDeleted
+#         createdDate
+#         lastModifiedDate
+#         senderUser {
+#           fullName
+#           photoUrl
+#           bio
+#           id
+#         }
+#       }
+#       pageInfo {
+#         hasNextPage
+#         hasPreviousPage
+#       }
+#       totalCount
+#     }
+#     status
+#   }
+# }

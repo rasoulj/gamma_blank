@@ -1,0 +1,1 @@
+`query  { post_getPosts  { status, result  { items { id, content, likes, isLiked, mediaUrl, hashTags, user { fullName, createdDate, photoUrl }, community { id, title }, comments { id } } } } }`,

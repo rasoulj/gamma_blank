@@ -1,0 +1,28 @@
+subscription notificationAdded($userId: Int!) {
+  notificationAdded(userId: $userId) {
+    userId
+    user {
+      externalId
+      email
+      photoUrl
+      fullName
+      phoneNumber
+      about
+      location
+      age
+      dateOfBirth
+      id
+      isDeleted
+      createdDate
+      lastModifiedDate
+    }
+    notificationType
+    relatedEntityId
+    relatedEntity
+    isRead
+    id
+    isDeleted
+    createdDate
+    lastModifiedDate
+  }
+}

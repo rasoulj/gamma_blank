@@ -1,0 +1,37 @@
+# query chat_getCurrentUserChats($personId: Int!) {
+#   chat_getCurrentUserChats(personId: $personId) {
+#     result {
+#       items {
+#         id
+#       }
+#     }
+#   }
+# }
+
+# query chat_getCahtsByDirectMessage(
+#   $skip: Int
+#   $take: Int
+#   $where: ChatFilterInput
+#   $order: [ChatSortInput!]
+#   $directMessageId: Int!
+# ) {
+#   chat_getCahtsByDirectMessage(directMessageId: $directMessageId) {
+#     result(skip: $skip, take: $take, where: $where, order: $order) {
+#       items {
+#         userDirectMessageId
+#         ownerId
+#         content
+#         id
+#         isDeleted
+#         createdDate
+#         lastModifiedDate
+#       }
+#       pageInfo {
+#         hasNextPage
+#         hasPreviousPage
+#       }
+#       totalCount
+#     }
+#     status
+#   }
+# }

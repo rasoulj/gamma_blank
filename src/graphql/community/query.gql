@@ -1,0 +1,10 @@
+# query community_getCommunitys {
+#   community_getCommunitys {
+#     result {
+#       items {
+#         title
+#         id
+#       }
+#     }
+#   }
+# }

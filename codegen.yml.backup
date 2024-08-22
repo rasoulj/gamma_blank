@@ -1,0 +1,16 @@
+overwrite: true
+schema: 'https://apsy-biblo-asociar-dev.azurewebsites.net/graphql/'
+hooks:
+  afterAllFileWrite:
+    - prettier --write
+documents: 'src/graphql/**/*.gql'
+generates:
+  src/graphql/generated.tsx:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-query'
+    config:
+      addInfiniteQuery: true
+      fetcher:
+        func: 'src/graphql/fetcher#fetcher'

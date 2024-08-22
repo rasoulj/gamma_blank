@@ -1,0 +1,12 @@
+export {default as CrownIconSet} from './crown';
+export {default as CupIconSet} from './cup';
+export {default as JudgeIconSet} from './judge';
+export {default as MedalStarIconSet} from './medal-star';
+export {default as MedalIconSet} from './medal';
+export {default as PeopleIconSet} from './people';
+export {default as ProfileAddIconSet} from './profile-add';
+export {default as ProfileRemoveIconSet} from './profile-remove';
+export {default as ProfileIconSet} from './profile';
+export {default as RankingIconSet} from './ranking';
+export {default as TagUserIconSet} from './tag-user';
+export {default as ProfileBoldIconSet} from './profile-bold';

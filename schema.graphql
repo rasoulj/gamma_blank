@@ -1,0 +1,4405 @@
+"""
+The `@defer` directive may be provided for fragment spreads and inline fragments to inform the executor to delay the execution of the current fragment to indicate deprioritization of the current fragment. A query with `@defer` directive will cause the request to potentially return multiple responses, where non-deferred data is delivered in the initial response and data deferred is delivered in a subsequent response. `@include` and `@skip` take precedence over `@defer`.
+"""
+directive @defer(
+  """
+  If this argument label has a value other than null, it will be passed on to the result of this defer directive. This label is intended to give client applications a way to identify to which fragment a deferred result belongs to.
+  """
+  label: String
+
+  """
+  Deferred when true.
+  """
+  if: Boolean
+) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"""
+The `@stream` directive may be provided for a field of `List` type so that the backend can leverage technology such as asynchronous iterators to provide a partial list in the initial response, and additional list items in subsequent responses. `@include` and `@skip` take precedence over `@stream`.
+"""
+directive @stream(
+  """
+  If this argument label has a value other than null, it will be passed on to the result of this stream directive. This label is intended to give client applications a way to identify to which fragment a streamed result belongs to.
+  """
+  label: String
+
+  """
+  The initial elements that shall be send down to the consumer.
+  """
+  initialCount: Int! = 0
+
+  """
+  Streamed when true.
+  """
+  if: Boolean
+) on FIELD
+
+directive @authorize(
+  """
+  The name of the authorization policy that determines access to the annotated resource.
+  """
+  policy: String
+
+  """
+  Roles that are allowed to access the annotated resource.
+  """
+  roles: [String!]
+
+  """
+  Defines when when the resolver shall be executed.By default the resolver is executed after the policy has determined that the current user is allowed to access the field.
+  """
+  apply: ApplyPolicy! = BEFORE_RESOLVER
+) repeatable on SCHEMA | OBJECT | FIELD_DEFINITION
+
+type Query {
+  ecommerce_getItems: ListResponseBaseOfItem!
+  ecommerce_getItem(itemId: Int!): SingleResponseBaseOfItem!
+  ecommerce_getItemsByTag(tagId: Int!): ListResponseBaseOfItem!
+  ecommerce_getItemImage(entityId: Int!): ResponseBaseOfItemImage!
+  ecommerce_getItemImages(itemId: Int!): ListResponseBaseOfItemImage!
+  ecommerce_getItemSections: ListResponseBaseOfItemSection!
+  ecommerce_getItemSection(itemSectionId: Int!): ResponseBaseOfItemSection!
+  ecommerce_getItemSectionByItemId(itemId: Int!): ListResponseBaseOfItemSection!
+  ecommerce_getItemSectionValues: ListResponseBaseOfItemSectionValue!
+  ecommerce_getItemSectionValue(
+    itemSectionValueId: Int!
+  ): ResponseBaseOfItemSectionValue!
+  ecommerce_getItemSectionValuesBySectionId(
+    itemSectionId: Int!
+  ): ListResponseBaseOfItemSectionValue!
+  ecommerce_getTags: ListResponseBaseOfTag!
+  ecommerce_getTag(entityId: Int!): SingleResponseBaseOfTag!
+  ecommerce_getItemSectionAddOns: ListResponseBaseOfItemSectionAddOn!
+  ecommerce_getItemSectionAddOn(
+    itemSectionAddOnId: Int!
+  ): ResponseBaseOfItemSectionAddOn!
+  ecommerce_getItemSectionAddOnsByItemSectionId(
+    itemSectionId: Int!
+  ): ListResponseBaseOfItemSectionAddOn!
+  ecommerce_getAddOnShoppingCardDetails: ListResponseBaseOfAddOnShoppingCardDetail!
+  ecommerce_getAddOnShoppingCardDetail(
+    addOnShoppingCardDetailId: Int!
+  ): ResponseBaseOfAddOnShoppingCardDetail!
+  ecommerce_getShoppingHistory: ListResponseBaseOfShoppingCard!
+  ecommerce_getShoppingCards: ListResponseBaseOfShoppingCard!
+  ecommerce_getShoppingCard(shoppingCardId: Int!): ResponseBaseOfShoppingCard!
+  ecommerce_getWishList: ListResponseBaseOfWishList!
+  eventAndTicketing_getEvents: ListResponseBaseOfEventDto!
+  eventAndTicketing_getTickets: ListResponseBaseOfTicketDto!
+  eventAndTicketing_getEventTypes: ListResponseBaseOfEventType!
+  eventAndTicketing_getEventCategories: ListResponseBaseOfEventCategory!
+  eventAndTicketing_getFavoriteEvents: ListResponseBaseOfFavoriteEvent!
+  eventAndTicketing_getFavoriteEventOrganizers: ListResponseBaseOfFavoriteEventOrganizer!
+  eventAndTicketing_getOrganizers: ListResponseBaseOfOrganizerDto!
+  social_getUser(otherId: Int!): SingleResponseBaseOfSocialUserDto
+  social_getUsers: ListResponseBaseOfSocialUserDto
+  social_isUserFollower(userid: Int!, followerId: Int!): ResponseBaseOfBoolean
+  message_getConversation(
+    conversationId: Int!
+  ): SingleResponseBaseOfConversation
+  message_getUserMessages: ListResponseBaseOfConversationDto
+  message_getAllReceivers: ListResponseBaseOfUser
+  get(entityId: Int!): SingleResponseBaseOfUser
+  items: ListResponseBaseOfUser
+  notification_getNotifications: ListResponseBaseOfNotification
+  paymentStripe_isTransferEnabled(userStripeAccountId: String): ResponseStatus
+  paymentStripe_hasStripeAccount(
+    userStripeAccountId: String
+  ): ResponseBaseOfBoolean
+  paymentStripe_getPlatformBlance: ResponseBaseOfInt64
+  paymentStripe_hasEnoughBalanceForConnectUser(
+    amount: Float!
+    userStripeAccountId: String
+  ): ResponseBaseOfBoolean
+  paymentStripe_hasEnoughBalanceForPlatform(
+    amount: Float!
+  ): ResponseBaseOfBoolean
+  paymentStripe_getConnectUserBlance(
+    userStripeAccountId: String
+  ): ResponseBaseOfInt64
+  paymentStripe_onboardUserInStripeConnect(
+    userId: Int!
+    returnUrl: String
+    refreshUrl: String
+  ): ResponseBaseOfString
+  paymentStripe_geCharges: ListResponseBaseOfChargeDto
+  paymentStripe_geBalance(
+    stripeConnectedUserId: String
+  ): ResponseBaseOfBalanceDto
+  paymentStripe_geCustomers: ListResponseBaseOfCustomerDto
+  paymentStripe_geTransactions: ListResponseBaseOfBalanceTransactionDto
+  paymentStripe_geDisputes: ListResponseBaseOfDisputeDto
+  paymentStripe_geRefunds: ListResponseBaseOfRefundDto
+  paymentStripe_gePlans: ListResponseBaseOfPlanDto
+  paymentStripe_getConnectedUser(
+    stripeConnectedUserId: String
+  ): ResponseBaseOfAccountDto
+  social_getSocialEngagments(postId: Int!): ResponseBaseOfSocialEngagmentDto
+  social_getPostCategories: ListResponseBaseOfPostCategory
+  social_getPostComments(postId: Int!): ListResponseBaseOfComment
+  social_getCommentsByUser: ListResponseBaseOfComment
+  social_getTags: ListResponseBaseOfSocialTag
+  social_getAllPosts: ListResponseBaseOfPostDto
+  social_getUserPosts: ListResponseBaseOfPostDto
+  user_getCurrentUser: SingleResponseBaseOfUser
+  user_getUsers: ListResponseBaseOfUser
+  user_getPhotos(userId: Int): ListResponseBaseOfUserPhotoGallery
+  user_getPhoto(entityId: Int!): SingleResponseBaseOfUserPhotoGallery
+  vonage_getCreatedSessions: ListResponseBaseOfVonageSession
+  vonage_getAllSessions: ListResponseBaseOfVonageSession
+  vonage_getUsersOfSession(
+    vonageSessionId: Int!
+  ): ListResponseBaseOfVonageSessionUser
+  vonage_getMessagesOfSession(
+    vonageSessionId: Int!
+  ): ListResponseBaseOfVonageMessage
+}
+
+type Mutation {
+  booking_createBooking(input: BookingInput): ResponseBaseOfBooking
+  booking_updateBooking(input: BookingInput): ResponseBaseOfBooking
+  ecommerce_createItem(input: ItemInput!): ResponseBaseOfItem!
+  ecommerce_updateItem(input: ItemInput!): ResponseBaseOfItem!
+  ecommerce_removeItem(itemId: Int!): ResponseStatus!
+  ecommerce_createItemImage(input: ItemImageInput!): ResponseBaseOfItemImage!
+  ecommerce_updateItemImage(input: ItemImageInput!): ResponseBaseOfItemImage!
+  ecommerce_removeItemImage(entityId: Int!): ResponseStatus!
+  ecommerce_addItemSection(input: ItemSectionInput!): ResponseBaseOfItemSection!
+  ecommerce_updateItemSection(
+    input: ItemSectionInput!
+  ): ResponseBaseOfItemSection!
+  ecommerce_removeItemSection(sectionId: Int!): ResponseStatus!
+  ecommerce_addItemSectionValue(
+    input: ItemSectionValueInput!
+  ): ResponseBaseOfItemSectionValue!
+  ecommerce_updateItemSectionValue(
+    input: ItemSectionValueInput!
+  ): ResponseBaseOfItemSectionValue!
+  ecommerce_removeItemSectionValue(itemSectionValueId: Int!): ResponseStatus!
+  ecommerce_createTag(input: TagInput!): ResponseBaseOfTag!
+  ecommerce_updateTag(input: TagInput!): ResponseBaseOfTag!
+  ecommerce_removeTag(tagId: Int!): ResponseStatus!
+  ecommerce_createItemSectionAddOn(
+    input: ItemSectionAddOnInput!
+  ): ResponseBaseOfItemSectionAddOn!
+  ecommerce_updateItemSectionAddOn(
+    input: ItemSectionAddOnInput!
+  ): ResponseBaseOfItemSectionAddOn!
+  ecommerce_removeItemSectionAddOn(itemSectionAddOnId: Int!): ResponseStatus!
+  ecommerce_createAddOnShoppingCardDetail(
+    input: AddOnShoppingCardDetailInput!
+  ): ResponseBaseOfAddOnShoppingCardDetail!
+  ecommerce_removeAddOnShoppingCardDetail(
+    addOnShoppingCardId: Int!
+  ): ResponseBaseOfAddOnShoppingCardDetail!
+  ecommerce_addToShoppingCard(
+    input: ShoppingCardInput!
+  ): ResponseBaseOfShoppingCard!
+  ecommerce_removeFromShoppingCard(shoppingCardDetailId: Int!): ResponseStatus!
+  ecommerce_purchaseCard(shoppingCardId: Int!): ResponseBaseOfShoppingCard!
+  ecommerce_updateCardItemQuantity(
+    cardDetailId: Int!
+    quantity: Int!
+  ): ResponseBaseOfShoppingCard!
+  ecommerce_addToWishList(input: WishListInput!): ResponseBaseOfWishList!
+  ecommerce_removeFromWishList(itemId: Int!): ResponseStatus!
+  email_sendEmail(emailInput: EmailInput!): ResponseBaseOfEmail!
+  eventAndTicketing_createEvent(input: EventInput!): ResponseBaseOfEvent!
+  eventAndTicketing_createTicket(input: TicketInput!): ResponseBaseOfTicket!
+  eventAndTicketing_createEventType(
+    input: EventTypeInput!
+  ): ResponseBaseOfEventType!
+  eventAndTicketing_updateEvent(
+    eventId: Int!
+    input: EventInput!
+  ): ResponseBaseOfEvent!
+  eventAndTicketing_updateTicket(
+    ticketId: Int!
+    input: TicketInput!
+  ): ResponseBaseOfTicket!
+  eventAndTicketing_updateEventType(
+    eventTypeId: Int!
+    input: EventTypeInput!
+  ): ResponseBaseOfEventType!
+  eventAndTicketing_removeEvent(eventId: Int!): ResponseStatus!
+  eventAndTicketing_removeTicket(ticketId: Int!): ResponseStatus!
+  eventAndTicketing_removeEventType(eventTypeId: Int!): ResponseStatus!
+  eventAndTicketing_createEventCategory(
+    input: EventCategoryInput!
+  ): ResponseBaseOfEventCategory!
+  eventAndTicketing_updateEventCategory(
+    input: EventCategoryInput!
+  ): ResponseBaseOfEventCategory!
+  eventAndTicketing_removeEventCategory(
+    eventCategoryId: Int!
+  ): ResponseBaseOfEventCategory!
+  eventAndTicketing_createFavoriteEvent(
+    eventId: Int!
+  ): ResponseBaseOfFavoriteEvent!
+  eventAndTicketing_removeFavoriteEvent(eventId: Int!): ResponseStatus!
+  eventAndTicketing_createFavoriteEventOrganizer(
+    organizerId: Int!
+  ): ResponseBaseOfFavoriteEventOrganizer!
+  eventAndTicketing_removeFavoriteEventOrganizer(
+    organizerId: Int!
+  ): ResponseStatus!
+  eventAndTicketing_createEventRating(
+    input: EventRatingInput!
+  ): ResponseBaseOfEventRating!
+  eventAndTicketing_removeEventRating(eventId: Int!): ResponseStatus!
+  social_followUser(input: FollowerInput): ResponseBaseOfUserFollower
+  social_unfollow(input: FollowerInput): ResponseBase
+  message_createDirectMessage(
+    input: MessageInput
+    receiverId: Int!
+  ): ResponseBaseOfMessage
+  message_removeConversation(conversationId: Int!): ResponseStatus
+  message_removeMessage(messageId: Int!): ResponseStatus
+  message_updateMessage(text: String, messageId: Int!): ResponseBaseOfMessage
+  message_addUserToGroup(conversationId: Int!, userIds: [Int!]): ResponseStatus
+  message_createConversationGroup(
+    input: GroupMessageInput
+    userIds: [Int!]
+  ): ResponseBaseOfConversation
+  message_createGroupMessage(messageInput: MessageInput): ResponseBaseOfMessage
+  message_removeUserFromGroup(conversationId: Int!): ResponseStatus
+  mintNft_createMint(mintNftInput: MintNftInput): ResponseBaseOfMintNft
+  mintNft_changeMintStatus(
+    mintId: Int!
+    isMinted: Boolean!
+  ): ResponseBaseOfMintNft
+  notification_setRead(notificationId: Int!): ResponseBaseOfNotification
+  paymentStripe_createChargeByToken(
+    input: StripPaymentInput
+  ): ResponseBaseOfChargeDto
+  paymentStripe_createCharge(
+    paymentInput: StripFullPaymentInput
+    customerInput: CustomerInput
+    userStripeAccountId: String
+  ): ResponseBaseOfChargeDto
+  paymentStripe_subscribeToPlan(
+    planId: String
+    customerId: String
+  ): ResponseStatus
+  paymentStripe_createCheckoutSessionAsync(
+    priceId: String
+    baseUrl: String
+    customerId: String
+  ): ResponseBaseOfString
+  paymentStripe_CreateCustomer(
+    customerInput: CustomerInput
+  ): ResponseBaseOfCustomerDto
+  paymentStripe_transferMoneyToAccount(
+    userStripeAccountId: String
+    cost: Float!
+    metadata: [KeyValuePairOfStringAndStringInput!]
+    currency: String = "usd"
+    transferGroup: String
+  ): ResponseBaseOfTransferDto
+  paymentStripe_getMoneyFromConnectAccoun(
+    userStripeAccountId: String
+    cost: Float!
+    metadata: [KeyValuePairOfStringAndStringInput!]
+    currency: String = "usd"
+  ): ResponseBaseOfChargeDto
+  social_addImpresion(
+    userId: Int!
+    impressionType: ImpressionType!
+    isFollower: Boolean!
+  ): ResponseStatus
+  social_increaseShareCount(postId: Int!): ResponseStatus
+  social_createPostCategory(
+    input: PostCategoryInput
+  ): ResponseBaseOfPostCategory
+  social_updatePostCategory(
+    input: PostCategoryInput
+  ): ResponseBaseOfPostCategory
+  social_removePostCategory(categoryId: Int!): ResponseStatus
+  social_createComment(commentInput: CommentInput): ResponseBaseOfComment
+  social_updateComment(commentId: Int!, text: String): ResponseBaseOfComment
+  social_removeComment(commentId: Int!): ResponseBaseOfComment
+  social_updateRating(input: RatingInput): ResponseBaseOfRating
+  social_removeRating(postId: Int!): ResponseStatus
+  social_createPostTag(input: PostTagInput): ResponseBaseOfPostTag
+  social_removePostTag(entityId: Int!): ResponseStatus
+  social_createTag(input: SocialTagInput): ResponseBaseOfSocialTag
+  social_updateTag(input: SocialTagInput): ResponseBaseOfSocialTag
+  social_removeTag(entityId: Int!): ResponseStatus
+  social_createPost(input: PostInput): ResponseBaseOfPost
+  social_removePost(entityId: Int!): ResponseStatus
+  social_updatePost(input: PostInput): ResponseBaseOfPost
+  social_likePost(postId: Int!, liked: Boolean!): ResponseBase
+  sms_sendSms(smsInput: SmsInput!): ResponseBaseOfSMS!
+  user_addPhoto(photo: String): ResponseBaseOfUserPhotoGallery
+  user_removePhoto(photoGalleryId: Int!): ResponseStatus
+  user_signUp(userInput: UserInput): ResponseBaseOfUser
+  user_removeUser: ResponseStatus
+  user_updateUser(userId: Int, userInput: UserInput): ResponseBaseOfUser
+  vonage_createSession(input: VonageSessionInput): ResponseBaseOfVonageSession
+  vonage_updateSession(input: VonageSessionInput): ResponseBaseOfVonageSession
+  vonage_removeSession(entityId: Int!): ResponseStatus
+  vonage_createSessionUser(
+    input: [VonageSessionUserInput]
+  ): ResponseBaseOfVonageSessionUser
+  vonage_removeSessionUser(entityId: Int!): ResponseStatus
+  vonage_createTokenForSession(
+    vonageSessionId: Int!
+  ): ResponseBaseOfVonageTokenDtoDef
+  vonage_createMessage(input: VonageMessageInput): ResponseBaseOfVonageMessage
+}
+
+type Subscription {
+  testSubscription: Int!
+  directMessageAdded(userId: Int!): Message
+  groupMessageAdded(groupConversationId: Int!): Message
+  userAddedToGroupMessage(userId: Int!): Conversation
+  notificationAdded(userId: Int!): Notification
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+}
+
+input EventInput {
+  title: String!
+  imageUrl: String!
+  description: String!
+  state: String!
+  capacity: Int
+  date: DateTime!
+  startTime: TimeSpan
+  endTime: TimeSpan
+  price: Decimal
+  currency: String!
+  eventTypeId: Int
+  isActive: Boolean
+  city: String!
+  streetAddress: String!
+  zipCode: String!
+  eventCategoryId: Int
+}
+
+type ResponseBaseOfEvent {
+  result: Event
+  status: Any
+}
+
+input EmailInput {
+  toEmailAddress: String!
+  toName: String
+  subject: String!
+  plainTextContent: String
+  htmlContent: String
+}
+
+type ResponseBaseOfEmail {
+  result: Email
+  status: Any
+}
+
+input WishListInput {
+  id: Int
+  userId: Int
+  itemId: Int
+}
+
+type ResponseBaseOfWishList {
+  result: WishList
+  status: Any
+}
+
+input ShoppingCardInput {
+  itemId: Int!
+  quantity: Int
+  addOnsIds: [Int!]
+}
+
+type ResponseBaseOfShoppingCard {
+  result: ShoppingCard
+  status: Any
+}
+
+input AddOnShoppingCardDetailInput {
+  id: Int
+  shoppingCardDetailId: Int
+  itemSectionAddOnsId: Int
+}
+
+type ResponseBaseOfAddOnShoppingCardDetail {
+  result: AddOnShoppingCardDetail
+  status: Any
+}
+
+input ItemSectionAddOnInput {
+  id: Int
+  itemSectionId: Int
+  value: String
+  price: Int
+  row: Int
+}
+
+type ResponseBaseOfItemSectionAddOn {
+  result: ItemSectionAddOn
+  status: Any
+}
+
+input TagInput {
+  id: Int
+  title: String
+}
+
+type ResponseBaseOfTag {
+  result: Tag
+  status: Any
+}
+
+input ItemSectionValueInput {
+  id: Int
+  itemSectionId: Int
+  key: String
+  value: String
+  row: Int
+}
+
+type ResponseBaseOfItemSectionValue {
+  result: ItemSectionValue
+  status: Any
+}
+
+input ItemSectionInput {
+  id: Int
+  itemId: Int
+  name: String
+  isItemAddOns: Boolean
+  row: Int
+}
+
+type ResponseBaseOfItemSection {
+  result: ItemSection
+  status: Any
+}
+
+input ItemImageInput {
+  id: Int
+  itemId: Int
+  imageUrl: String
+  isMain: Boolean
+  row: Int
+}
+
+type ResponseBaseOfItemImage {
+  result: ItemImage
+  status: Any
+}
+
+input ItemInput {
+  id: Int
+  title: String
+  price: Int
+  description: String
+  discount: Int
+  availableQuantity: Int
+  images: [String!]
+  tagIds: [Int!]
+}
+
+type ResponseBaseOfItem {
+  result: Item
+  status: Any
+}
+
+type ResponseStatus {
+  code: Int!
+  value: String
+  description: String
+}
+
+input BookingInput {
+  id: Int
+  visitorId: Int
+  hostId: Int
+  date: DateTime
+  workingHourId: Int
+}
+
+type ResponseBaseOfBooking {
+  result: Booking
+  status: Any
+}
+
+type ResponseBaseOfTicket {
+  result: Ticket
+  status: Any
+}
+
+input TicketInput {
+  eventId: Int!
+  participantId: Int!
+  ticketStatus: TicketStatus
+}
+
+type ResponseBaseOfEventType {
+  result: EventType
+  status: Any
+}
+
+input EventTypeInput {
+  typeTitle: String!
+}
+
+type ResponseBaseOfEventCategory {
+  result: EventCategory
+  status: Any
+}
+
+input EventCategoryInput {
+  id: Int
+  name: String!
+  photoUrl: String!
+}
+
+type ResponseBaseOfFavoriteEvent {
+  result: FavoriteEvent
+  status: Any
+}
+
+type ResponseBaseOfFavoriteEventOrganizer {
+  result: FavoriteEventOrganizer
+  status: Any
+}
+
+type ResponseBaseOfEventRating {
+  result: EventRating
+  status: Any
+}
+
+input EventRatingInput {
+  eventId: Int!
+  rate: Int!
+}
+
+type ResponseBaseOfUserFollower {
+  result: UserFollower
+  status: Any
+}
+
+input FollowerInput {
+  followedId: Int!
+}
+
+type ResponseBase {
+  status: Any
+}
+
+type ResponseBaseOfMessage {
+  result: Message
+  status: Any
+}
+
+input MessageInput {
+  conversationId: Int
+  text: String
+}
+
+type ResponseBaseOfConversation {
+  result: Conversation
+  status: Any
+}
+
+input GroupMessageInput {
+  groupName: String!
+  groupDescription: String
+  imgageUrl: String
+}
+
+type ResponseBaseOfMintNft {
+  result: MintNft
+  status: Any
+}
+
+input MintNftInput {
+  mediaUrl: String
+  itemName: String
+  externalLink: String
+  collection: String
+  price: Decimal!
+}
+
+type ResponseBaseOfNotification {
+  result: Notification
+  status: Any
+}
+
+type ResponseBaseOfChargeDto {
+  result: ChargeDto
+  status: Any
+}
+
+input StripPaymentInput {
+  amount: Float!
+  stripeToken: String
+  customerId: String
+  metadata: [KeyValuePairOfStringAndStringInput!]
+}
+
+input StripFullPaymentInput {
+  cardNumder: String!
+  cVC: String!
+  expMonth: Long!
+  expYear: Long!
+  amount: Long!
+  currency: String
+  description: String
+  entityId: Int!
+  customerId: String
+  metadata: [KeyValuePairOfStringAndStringInput!]
+}
+
+input CustomerInput {
+  email: String
+  name: String
+  description: String
+  balance: Long
+  metadata: [KeyValuePairOfStringAndStringInput!]
+}
+
+type ResponseBaseOfString {
+  result: String
+  status: Any
+}
+
+type ResponseBaseOfCustomerDto {
+  result: CustomerDto
+  status: Any
+}
+
+type ResponseBaseOfTransferDto {
+  result: TransferDto
+  status: Any
+}
+
+input KeyValuePairOfStringAndStringInput {
+  key: String!
+  value: String!
+}
+
+enum ImpressionType {
+  FROM_PROFILE
+  FROM_HOME
+  FROM_HASHTAG
+  FROM_OTHER
+}
+
+type ResponseBaseOfPostCategory {
+  result: PostCategory
+  status: Any
+}
+
+input PostCategoryInput {
+  id: Int
+  name: String
+}
+
+type ResponseBaseOfComment {
+  result: Comment
+  status: Any
+}
+
+input CommentInput {
+  isFollower: Boolean!
+  postId: Int!
+  parentId: Int
+  text: String
+}
+
+type ResponseBaseOfRating {
+  result: Rating
+  status: Any
+}
+
+input RatingInput {
+  postId: Int!
+  rating: Int!
+}
+
+type ResponseBaseOfPostTag {
+  result: PostTag
+  status: Any
+}
+
+input PostTagInput {
+  id: Int
+  postId: Int!
+  tagId: Int!
+}
+
+type ResponseBaseOfSocialTag {
+  result: SocialTag
+  status: Any
+}
+
+input SocialTagInput {
+  id: Int
+  title: String
+}
+
+type ResponseBaseOfPost {
+  result: Post
+  status: Any
+}
+
+input PostInput {
+  imageUrl: String
+  videoUrl: String
+  usedTags: String
+  description: String
+  postCategoryId: Int
+  posterId: Int
+}
+
+type ResponseBaseOfSMS {
+  result: SMS
+  status: Any
+}
+
+input SmsInput {
+  toNumber: String!
+  text: String!
+}
+
+type ResponseBaseOfUserPhotoGallery {
+  result: UserPhotoGallery
+  status: Any
+}
+
+type ResponseBaseOfUser {
+  result: User
+  status: Any
+}
+
+input UserInput {
+  bio: String
+  address: String
+  socialSecurityNumber: String
+  photoUrl: String
+  fullName: String
+  phoneNumber: String
+  about: String
+  location: String
+  age: Int
+  dateOfBirth: DateTime
+}
+
+type ResponseBaseOfVonageSession {
+  result: VonageSession
+  status: Any
+}
+
+input VonageSessionInput {
+  id: Int
+  date: DateTime
+}
+
+type ResponseBaseOfVonageSessionUser {
+  result: VonageSessionUser
+  status: Any
+}
+
+input VonageSessionUserInput {
+  id: Int
+  userId: Int
+  vonageSessionId: Int
+}
+
+type ResponseBaseOfVonageTokenDtoDef {
+  result: VonageTokenDtoDef
+  status: Any
+}
+
+type ResponseBaseOfVonageMessage {
+  result: VonageMessage
+  status: Any
+}
+
+input VonageMessageInput {
+  vonageSessionId: Int
+  text: String
+  attachment: String
+}
+
+type SingleResponseBaseOfBooking {
+  result: Booking
+  status: Any
+}
+
+type ListResponseBaseOfBooking {
+  result(
+    skip: Int
+    take: Int
+    where: BookingFilterInput
+    order: [BookingSortInput!]
+  ): BookingCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfItem {
+  result(
+    skip: Int
+    take: Int
+    where: ItemFilterInput
+    order: [ItemSortInput!]
+  ): ItemCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfItem {
+  result: Item
+  status: Any
+}
+
+type ListResponseBaseOfItemImage {
+  result(
+    skip: Int
+    take: Int
+    where: ItemImageFilterInput
+    order: [ItemImageSortInput!]
+  ): ItemImageCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfItemSection {
+  result(
+    skip: Int
+    take: Int
+    where: ItemSectionFilterInput
+    order: [ItemSectionSortInput!]
+  ): ItemSectionCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfItemSectionValue {
+  result(
+    skip: Int
+    take: Int
+    where: ItemSectionValueFilterInput
+    order: [ItemSectionValueSortInput!]
+  ): ItemSectionValueCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfTag {
+  result(
+    skip: Int
+    take: Int
+    where: TagFilterInput
+    order: [TagSortInput!]
+  ): TagCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfTag {
+  result: Tag
+  status: Any
+}
+
+type ListResponseBaseOfItemSectionAddOn {
+  result(
+    skip: Int
+    take: Int
+    where: ItemSectionAddOnFilterInput
+    order: [ItemSectionAddOnSortInput!]
+  ): ItemSectionAddOnCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfAddOnShoppingCardDetail {
+  result(
+    skip: Int
+    take: Int
+    where: AddOnShoppingCardDetailFilterInput
+    order: [AddOnShoppingCardDetailSortInput!]
+  ): AddOnShoppingCardDetailCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfShoppingCard {
+  result(
+    skip: Int
+    take: Int
+    where: ShoppingCardFilterInput
+    order: [ShoppingCardSortInput!]
+  ): ShoppingCardCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfWishList {
+  result(
+    skip: Int
+    take: Int
+    where: WishListFilterInput
+    order: [WishListSortInput!]
+  ): WishListCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfEventDto {
+  result(
+    skip: Int
+    take: Int
+    where: EventDtoFilterInput
+    order: [EventDtoSortInput!]
+  ): EventDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfTicketDto {
+  result(
+    skip: Int
+    take: Int
+    where: TicketDtoFilterInput
+    order: [TicketDtoSortInput!]
+  ): TicketDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfEventType {
+  result(
+    skip: Int
+    take: Int
+    where: EventTypeFilterInput
+    order: [EventTypeSortInput!]
+  ): EventTypeCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfEventCategory {
+  result(
+    skip: Int
+    take: Int
+    where: EventCategoryFilterInput
+    order: [EventCategorySortInput!]
+  ): EventCategoryCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfFavoriteEvent {
+  result(
+    skip: Int
+    take: Int
+    where: FavoriteEventFilterInput
+    order: [FavoriteEventSortInput!]
+  ): FavoriteEventCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfFavoriteEventOrganizer {
+  result(
+    skip: Int
+    take: Int
+    where: FavoriteEventOrganizerFilterInput
+    order: [FavoriteEventOrganizerSortInput!]
+  ): FavoriteEventOrganizerCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfOrganizerDto {
+  result(
+    skip: Int
+    take: Int
+    where: OrganizerDtoFilterInput
+    order: [OrganizerDtoSortInput!]
+  ): OrganizerDtoCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfUserFollower {
+  result: UserFollower
+  status: Any
+}
+
+type ListResponseBaseOfUserFollower {
+  result(
+    skip: Int
+    take: Int
+    where: UserFollowerFilterInput
+    order: [UserFollowerSortInput!]
+  ): UserFollowerCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfSocialUserDto {
+  result: SocialUserDto
+  status: Any
+}
+
+type ListResponseBaseOfSocialUserDto {
+  result(
+    skip: Int
+    take: Int
+    where: SocialUserDtoFilterInput
+    order: [SocialUserDtoSortInput!]
+  ): SocialUserDtoCollectionSegment
+  status: Any
+}
+
+type ResponseBaseOfBoolean {
+  result: Boolean!
+  status: Any
+}
+
+type SingleResponseBaseOfConversation {
+  result: Conversation
+  status: Any
+}
+
+type ListResponseBaseOfConversationDto {
+  result(
+    skip: Int
+    take: Int
+    where: ConversationDtoFilterInput
+    order: [ConversationDtoSortInput!]
+  ): ConversationDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfUser {
+  result(
+    skip: Int
+    take: Int
+    where: UserFilterInput
+    order: [UserSortInput!]
+  ): UserCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfMessage {
+  result: Message
+  status: Any
+}
+
+type ListResponseBaseOfMessage {
+  result(
+    skip: Int
+    take: Int
+    where: MessageFilterInput
+    order: [MessageSortInput!]
+  ): MessageCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfNotification {
+  result(
+    skip: Int
+    take: Int
+    where: NotificationFilterInput
+    order: [NotificationSortInput!]
+  ): NotificationCollectionSegment
+  status: Any
+}
+
+type ResponseBaseOfInt64 {
+  result: Long!
+  status: Any
+}
+
+type ListResponseBaseOfChargeDto {
+  result(
+    skip: Int
+    take: Int
+    where: ChargeDtoFilterInput
+    order: [ChargeDtoSortInput!]
+  ): ChargeDtoCollectionSegment
+  status: Any
+}
+
+type ResponseBaseOfBalanceDto {
+  result: BalanceDto
+  status: Any
+}
+
+type ListResponseBaseOfCustomerDto {
+  result(
+    skip: Int
+    take: Int
+    where: CustomerDtoFilterInput
+    order: [CustomerDtoSortInput!]
+  ): CustomerDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfBalanceTransactionDto {
+  result(
+    skip: Int
+    take: Int
+    where: BalanceTransactionDtoFilterInput
+    order: [BalanceTransactionDtoSortInput!]
+  ): BalanceTransactionDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfDisputeDto {
+  result(
+    skip: Int
+    take: Int
+    where: DisputeDtoFilterInput
+    order: [DisputeDtoSortInput!]
+  ): DisputeDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfRefundDto {
+  result(
+    skip: Int
+    take: Int
+    where: RefundDtoFilterInput
+    order: [RefundDtoSortInput!]
+  ): RefundDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfPlanDto {
+  result(
+    skip: Int
+    take: Int
+    where: PlanDtoFilterInput
+    order: [PlanDtoSortInput!]
+  ): PlanDtoCollectionSegment
+  status: Any
+}
+
+type ResponseBaseOfAccountDto {
+  result: AccountDto
+  status: Any
+}
+
+type ResponseBaseOfSocialEngagmentDto {
+  result: SocialEngagmentDto
+  status: Any
+}
+
+type ListResponseBaseOfPostCategory {
+  result(
+    skip: Int
+    take: Int
+    where: PostCategoryFilterInput
+    order: [PostCategorySortInput!]
+  ): PostCategoryCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfComment {
+  result(
+    skip: Int
+    take: Int
+    where: CommentFilterInput
+    order: [CommentSortInput!]
+  ): CommentCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfSocialTag {
+  result(
+    skip: Int
+    take: Int
+    where: SocialTagFilterInput
+    order: [SocialTagSortInput!]
+  ): SocialTagCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfPost {
+  result: Post
+  status: Any
+}
+
+type ListResponseBaseOfPost {
+  result(
+    skip: Int
+    take: Int
+    where: PostFilterInput
+    order: [PostSortInput!]
+  ): PostCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfPostDto {
+  result(
+    skip: Int
+    take: Int
+    where: PostDtoFilterInput
+    order: [PostDtoSortInput!]
+  ): PostDtoCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfUser {
+  result: User
+  status: Any
+}
+
+type ListResponseBaseOfUserPhotoGallery {
+  result(
+    skip: Int
+    take: Int
+    where: UserPhotoGalleryFilterInput
+    order: [UserPhotoGallerySortInput!]
+  ): UserPhotoGalleryCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfUserPhotoGallery {
+  result: UserPhotoGallery
+  status: Any
+}
+
+type ListResponseBaseOfVonageSession {
+  result(
+    skip: Int
+    take: Int
+    where: VonageSessionFilterInput
+    order: [VonageSessionSortInput!]
+  ): VonageSessionCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfVonageSessionUser {
+  result(
+    skip: Int
+    take: Int
+    where: VonageSessionUserFilterInput
+    order: [VonageSessionUserSortInput!]
+  ): VonageSessionUserCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfVonageMessage {
+  result(
+    skip: Int
+    take: Int
+    where: VonageMessageFilterInput
+    order: [VonageMessageSortInput!]
+  ): VonageMessageCollectionSegment
+  status: Any
+}
+
+type Message {
+  createdAt: DateTime!
+  conversationId: Int
+  conversation: Conversation
+  senderId: Int!
+  sender: User
+  text: String
+  groupId: Int
+  isEdited: Boolean!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Conversation {
+  firstUserId: Int
+  firstUser: User
+  secondUserId: Int
+  secondUser: User
+  firstUnreadCount: Int!
+  secondUnreadCount: Int!
+  latestMessageDate: DateTime!
+  isGroup: Boolean!
+  groupName: String
+  groupDescription: String
+  groupImgageUrl: String
+  messages: [Message!]!
+  userGroups: [UserMessageGroup!]!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Notification {
+  userId: Int!
+  user: User
+  notificationType: String
+  relatedEntityId: Int
+  relatedEntity: String
+  isRead: Boolean!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+scalar Any
+
+input BookingFilterInput {
+  and: [BookingFilterInput!]
+  or: [BookingFilterInput!]
+  visitorId: ComparableInt32OperationFilterInput
+  visitor: VisitorFilterInput
+  hostId: ComparableInt32OperationFilterInput
+  host: HostFilterInput
+  date: ComparableDateTimeOperationFilterInput
+  workingHourId: ComparableInt32OperationFilterInput
+  workingHour: WorkingHoursFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input BookingSortInput {
+  visitorId: SortEnumType
+  visitor: VisitorSortInput
+  hostId: SortEnumType
+  host: HostSortInput
+  date: SortEnumType
+  workingHourId: SortEnumType
+  workingHour: WorkingHoursSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type BookingCollectionSegment {
+  items: [Booking]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ItemFilterInput {
+  and: [ItemFilterInput!]
+  or: [ItemFilterInput!]
+  title: StringOperationFilterInput
+  price: ComparableInt32OperationFilterInput
+  description: StringOperationFilterInput
+  discount: ComparableInt32OperationFilterInput
+  availableQuantity: ComparableInt32OperationFilterInput
+  itemImages: ListFilterInputTypeOfItemImageFilterInput
+  itemSections: ListFilterInputTypeOfItemSectionFilterInput
+  iTemTags: ListFilterInputTypeOfItemTagFilterInput
+  shoppingCardDetails: ListFilterInputTypeOfShoppingCardDetailFilterInput
+  wishLists: ListFilterInputTypeOfWishListFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ItemSortInput {
+  title: SortEnumType
+  price: SortEnumType
+  description: SortEnumType
+  discount: SortEnumType
+  availableQuantity: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ItemCollectionSegment {
+  items: [Item]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ItemImageFilterInput {
+  and: [ItemImageFilterInput!]
+  or: [ItemImageFilterInput!]
+  itemId: ComparableInt32OperationFilterInput
+  imageUrl: StringOperationFilterInput
+  isMain: BooleanOperationFilterInput
+  row: ComparableInt32OperationFilterInput
+  item: ItemFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ItemImageSortInput {
+  itemId: SortEnumType
+  imageUrl: SortEnumType
+  isMain: SortEnumType
+  row: SortEnumType
+  item: ItemSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ItemImageCollectionSegment {
+  items: [ItemImage]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ItemSectionFilterInput {
+  and: [ItemSectionFilterInput!]
+  or: [ItemSectionFilterInput!]
+  itemId: ComparableInt32OperationFilterInput
+  name: StringOperationFilterInput
+  isItemAddOns: BooleanOperationFilterInput
+  row: ComparableInt32OperationFilterInput
+  item: ItemFilterInput
+  values: ListFilterInputTypeOfItemSectionValueFilterInput
+  addOns: ListFilterInputTypeOfItemSectionAddOnFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ItemSectionSortInput {
+  itemId: SortEnumType
+  name: SortEnumType
+  isItemAddOns: SortEnumType
+  row: SortEnumType
+  item: ItemSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ItemSectionCollectionSegment {
+  items: [ItemSection]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ItemSectionValueFilterInput {
+  and: [ItemSectionValueFilterInput!]
+  or: [ItemSectionValueFilterInput!]
+  itemSectionId: ComparableInt32OperationFilterInput
+  key: StringOperationFilterInput
+  value: StringOperationFilterInput
+  row: ComparableInt32OperationFilterInput
+  itemSection: ItemSectionFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ItemSectionValueSortInput {
+  itemSectionId: SortEnumType
+  key: SortEnumType
+  value: SortEnumType
+  row: SortEnumType
+  itemSection: ItemSectionSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ItemSectionValueCollectionSegment {
+  items: [ItemSectionValue]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TagFilterInput {
+  and: [TagFilterInput!]
+  or: [TagFilterInput!]
+  title: StringOperationFilterInput
+  itemTags: ListFilterInputTypeOfItemTagFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input TagSortInput {
+  title: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type TagCollectionSegment {
+  items: [Tag]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ItemSectionAddOnFilterInput {
+  and: [ItemSectionAddOnFilterInput!]
+  or: [ItemSectionAddOnFilterInput!]
+  itemSectionId: ComparableInt32OperationFilterInput
+  value: StringOperationFilterInput
+  price: ComparableInt32OperationFilterInput
+  row: ComparableInt32OperationFilterInput
+  itemSection: ItemSectionFilterInput
+  addOnShoppingCardDetails: ListFilterInputTypeOfAddOnShoppingCardDetailFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ItemSectionAddOnSortInput {
+  itemSectionId: SortEnumType
+  value: SortEnumType
+  price: SortEnumType
+  row: SortEnumType
+  itemSection: ItemSectionSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ItemSectionAddOnCollectionSegment {
+  items: [ItemSectionAddOn]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input AddOnShoppingCardDetailFilterInput {
+  and: [AddOnShoppingCardDetailFilterInput!]
+  or: [AddOnShoppingCardDetailFilterInput!]
+  shoppingCardDetailId: ComparableInt32OperationFilterInput
+  itemSectionAddOnId: ComparableInt32OperationFilterInput
+  itemSectionAddOn: ItemSectionAddOnFilterInput
+  shoppingCardDetail: ShoppingCardDetailFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input AddOnShoppingCardDetailSortInput {
+  shoppingCardDetailId: SortEnumType
+  itemSectionAddOnId: SortEnumType
+  itemSectionAddOn: ItemSectionAddOnSortInput
+  shoppingCardDetail: ShoppingCardDetailSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type AddOnShoppingCardDetailCollectionSegment {
+  items: [AddOnShoppingCardDetail]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ShoppingCardFilterInput {
+  and: [ShoppingCardFilterInput!]
+  or: [ShoppingCardFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  tax: ComparableInt32OperationFilterInput
+  purchasePrice: ComparableInt32OperationFilterInput
+  totalDiscount: ComparableDoubleOperationFilterInput
+  subTotal: ComparableInt32OperationFilterInput
+  deliveryFee: ComparableInt32OperationFilterInput
+  purchasedDate: ComparableNullableOfDateTimeOperationFilterInput
+  deliveryType: NullableOfDeliveryTypeOperationFilterInput
+  orderStatus: OrderStatusOperationFilterInput
+  user: UserFilterInput
+  shoppingCardDetails: ListFilterInputTypeOfShoppingCardDetailFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ShoppingCardSortInput {
+  userId: SortEnumType
+  tax: SortEnumType
+  purchasePrice: SortEnumType
+  totalDiscount: SortEnumType
+  subTotal: SortEnumType
+  deliveryFee: SortEnumType
+  purchasedDate: SortEnumType
+  deliveryType: SortEnumType
+  orderStatus: SortEnumType
+  user: UserSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ShoppingCardCollectionSegment {
+  items: [ShoppingCard]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input WishListFilterInput {
+  and: [WishListFilterInput!]
+  or: [WishListFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  itemId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  item: ItemFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input WishListSortInput {
+  userId: SortEnumType
+  itemId: SortEnumType
+  user: UserSortInput
+  item: ItemSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type WishListCollectionSegment {
+  items: [WishList]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input EventDtoFilterInput {
+  and: [EventDtoFilterInput!]
+  or: [EventDtoFilterInput!]
+  event: EventFilterInput
+  isFavorite: BooleanOperationFilterInput
+}
+
+input EventDtoSortInput {
+  event: EventSortInput
+  isFavorite: SortEnumType
+}
+
+type EventDtoCollectionSegment {
+  items: [EventDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TicketDtoFilterInput {
+  and: [TicketDtoFilterInput!]
+  or: [TicketDtoFilterInput!]
+  ticket: TicketFilterInput
+  isFavorite: BooleanOperationFilterInput
+}
+
+input TicketDtoSortInput {
+  ticket: TicketSortInput
+  isFavorite: SortEnumType
+}
+
+type TicketDtoCollectionSegment {
+  items: [TicketDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input EventTypeFilterInput {
+  and: [EventTypeFilterInput!]
+  or: [EventTypeFilterInput!]
+  typeTitle: StringOperationFilterInput
+  participants: ListFilterInputTypeOfEventFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input EventTypeSortInput {
+  typeTitle: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type EventTypeCollectionSegment {
+  items: [EventType]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input EventCategoryFilterInput {
+  and: [EventCategoryFilterInput!]
+  or: [EventCategoryFilterInput!]
+  name: StringOperationFilterInput
+  photoUrl: StringOperationFilterInput
+  events: ListFilterInputTypeOfEventFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input EventCategorySortInput {
+  name: SortEnumType
+  photoUrl: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type EventCategoryCollectionSegment {
+  items: [EventCategory]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input FavoriteEventFilterInput {
+  and: [FavoriteEventFilterInput!]
+  or: [FavoriteEventFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  eventId: ComparableInt32OperationFilterInput
+  event: EventFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input FavoriteEventSortInput {
+  userId: SortEnumType
+  user: UserSortInput
+  eventId: SortEnumType
+  event: EventSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type FavoriteEventCollectionSegment {
+  items: [FavoriteEvent]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input FavoriteEventOrganizerFilterInput {
+  and: [FavoriteEventOrganizerFilterInput!]
+  or: [FavoriteEventOrganizerFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  organizerId: ComparableInt32OperationFilterInput
+  organizer: UserFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input FavoriteEventOrganizerSortInput {
+  userId: SortEnumType
+  user: UserSortInput
+  organizerId: SortEnumType
+  organizer: UserSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type FavoriteEventOrganizerCollectionSegment {
+  items: [FavoriteEventOrganizer]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input OrganizerDtoFilterInput {
+  and: [OrganizerDtoFilterInput!]
+  or: [OrganizerDtoFilterInput!]
+  user: UserFilterInput
+  isFavorite: BooleanOperationFilterInput
+}
+
+input OrganizerDtoSortInput {
+  user: UserSortInput
+  isFavorite: SortEnumType
+}
+
+type OrganizerDtoCollectionSegment {
+  items: [OrganizerDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input UserFollowerFilterInput {
+  and: [UserFollowerFilterInput!]
+  or: [UserFollowerFilterInput!]
+  followerId: ComparableInt32OperationFilterInput
+  follower: UserFilterInput
+  followedId: ComparableInt32OperationFilterInput
+  followed: UserFilterInput
+  isMutual: BooleanOperationFilterInput
+  followedAt: ComparableDateTimeOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input UserFollowerSortInput {
+  followerId: SortEnumType
+  follower: UserSortInput
+  followedId: SortEnumType
+  followed: UserSortInput
+  isMutual: SortEnumType
+  followedAt: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type UserFollowerCollectionSegment {
+  items: [UserFollower]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input SocialUserDtoFilterInput {
+  and: [SocialUserDtoFilterInput!]
+  or: [SocialUserDtoFilterInput!]
+  followersCount: ComparableInt32OperationFilterInput
+  followedCount: ComparableInt32OperationFilterInput
+  isFollowed: BooleanOperationFilterInput
+}
+
+input SocialUserDtoSortInput {
+  followersCount: SortEnumType
+  followedCount: SortEnumType
+  isFollowed: SortEnumType
+}
+
+type SocialUserDtoCollectionSegment {
+  items: [SocialUserDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ConversationDtoFilterInput {
+  and: [ConversationDtoFilterInput!]
+  or: [ConversationDtoFilterInput!]
+  conversationId: ComparableInt32OperationFilterInput
+  isGroup: BooleanOperationFilterInput
+  receiver: ListFilterInputTypeOfUserFilterInput
+  unreadCount: ComparableInt32OperationFilterInput
+  groupName: StringOperationFilterInput
+  groupImgageUrl: StringOperationFilterInput
+  latestMessageDate: ComparableDateTimeOperationFilterInput
+  lastMessage: MessageFilterInput
+}
+
+input ConversationDtoSortInput {
+  conversationId: SortEnumType
+  isGroup: SortEnumType
+  unreadCount: SortEnumType
+  groupName: SortEnumType
+  groupImgageUrl: SortEnumType
+  latestMessageDate: SortEnumType
+  lastMessage: MessageSortInput
+}
+
+type ConversationDtoCollectionSegment {
+  items: [ConversationDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input UserFilterInput {
+  and: [UserFilterInput!]
+  or: [UserFilterInput!]
+  address: StringOperationFilterInput
+  socialSecurityNumber: StringOperationFilterInput
+  followers: ListFilterInputTypeOfUserFollowerFilterInput
+  followees: ListFilterInputTypeOfUserFollowerFilterInput
+  externalId: StringOperationFilterInput
+  email: StringOperationFilterInput
+  photoUrl: StringOperationFilterInput
+  fullName: StringOperationFilterInput
+  phoneNumber: StringOperationFilterInput
+  about: StringOperationFilterInput
+  location: StringOperationFilterInput
+  age: ComparableNullableOfInt32OperationFilterInput
+  dateOfBirth: ComparableNullableOfDateTimeOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input UserSortInput {
+  address: SortEnumType
+  socialSecurityNumber: SortEnumType
+  externalId: SortEnumType
+  email: SortEnumType
+  photoUrl: SortEnumType
+  fullName: SortEnumType
+  phoneNumber: SortEnumType
+  about: SortEnumType
+  location: SortEnumType
+  age: SortEnumType
+  dateOfBirth: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type UserCollectionSegment {
+  items: [User]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input MessageFilterInput {
+  and: [MessageFilterInput!]
+  or: [MessageFilterInput!]
+  createdAt: ComparableDateTimeOperationFilterInput
+  conversationId: ComparableNullableOfInt32OperationFilterInput
+  conversation: ConversationFilterInput
+  senderId: ComparableInt32OperationFilterInput
+  sender: UserFilterInput
+  text: StringOperationFilterInput
+  groupId: ComparableNullableOfInt32OperationFilterInput
+  isEdited: BooleanOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input MessageSortInput {
+  createdAt: SortEnumType
+  conversationId: SortEnumType
+  conversation: ConversationSortInput
+  senderId: SortEnumType
+  sender: UserSortInput
+  text: SortEnumType
+  groupId: SortEnumType
+  isEdited: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type MessageCollectionSegment {
+  items: [Message]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input NotificationFilterInput {
+  and: [NotificationFilterInput!]
+  or: [NotificationFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  notificationType: StringOperationFilterInput
+  relatedEntityId: ComparableNullableOfInt32OperationFilterInput
+  relatedEntity: StringOperationFilterInput
+  isRead: BooleanOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input NotificationSortInput {
+  userId: SortEnumType
+  user: UserSortInput
+  notificationType: SortEnumType
+  relatedEntityId: SortEnumType
+  relatedEntity: SortEnumType
+  isRead: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type NotificationCollectionSegment {
+  items: [Notification]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ChargeDtoFilterInput {
+  and: [ChargeDtoFilterInput!]
+  or: [ChargeDtoFilterInput!]
+  id: StringOperationFilterInput
+  amount: ComparableInt64OperationFilterInput
+  amountCaptured: ComparableInt64OperationFilterInput
+  amountRefunded: ComparableInt64OperationFilterInput
+  applicationId: StringOperationFilterInput
+  applicationFeeId: StringOperationFilterInput
+  applicationFeeAmount: ComparableNullableOfInt64OperationFilterInput
+  balanceTransactionId: StringOperationFilterInput
+  currency: StringOperationFilterInput
+  customerId: StringOperationFilterInput
+  description: StringOperationFilterInput
+  disputed: BooleanOperationFilterInput
+  failureCode: StringOperationFilterInput
+  failureMessage: StringOperationFilterInput
+  invoiceId: StringOperationFilterInput
+  livemode: BooleanOperationFilterInput
+  receiptEmail: StringOperationFilterInput
+  receiptNumber: StringOperationFilterInput
+  receiptUrl: StringOperationFilterInput
+  paymentIntentId: StringOperationFilterInput
+  paymentMethod: StringOperationFilterInput
+  paymentDate: ComparableDateTimeOperationFilterInput
+  entityId: ComparableNullableOfInt32OperationFilterInput
+}
+
+input ChargeDtoSortInput {
+  id: SortEnumType
+  amount: SortEnumType
+  amountCaptured: SortEnumType
+  amountRefunded: SortEnumType
+  applicationId: SortEnumType
+  applicationFeeId: SortEnumType
+  applicationFeeAmount: SortEnumType
+  balanceTransactionId: SortEnumType
+  currency: SortEnumType
+  customerId: SortEnumType
+  description: SortEnumType
+  disputed: SortEnumType
+  failureCode: SortEnumType
+  failureMessage: SortEnumType
+  invoiceId: SortEnumType
+  livemode: SortEnumType
+  receiptEmail: SortEnumType
+  receiptNumber: SortEnumType
+  receiptUrl: SortEnumType
+  paymentIntentId: SortEnumType
+  paymentMethod: SortEnumType
+  paymentDate: SortEnumType
+  entityId: SortEnumType
+}
+
+type ChargeDtoCollectionSegment {
+  items: [ChargeDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input CustomerDtoFilterInput {
+  and: [CustomerDtoFilterInput!]
+  or: [CustomerDtoFilterInput!]
+  id: StringOperationFilterInput
+  object: StringOperationFilterInput
+  address: AddressDtoFilterInput
+  balance: ComparableInt64OperationFilterInput
+  created: ComparableDateTimeOperationFilterInput
+  currency: StringOperationFilterInput
+  deleted: BooleanOperationFilterInput
+  description: StringOperationFilterInput
+  email: StringOperationFilterInput
+  invoicePrefix: StringOperationFilterInput
+  livemode: BooleanOperationFilterInput
+  name: StringOperationFilterInput
+}
+
+input CustomerDtoSortInput {
+  id: SortEnumType
+  object: SortEnumType
+  address: AddressDtoSortInput
+  balance: SortEnumType
+  created: SortEnumType
+  currency: SortEnumType
+  deleted: SortEnumType
+  description: SortEnumType
+  email: SortEnumType
+  invoicePrefix: SortEnumType
+  livemode: SortEnumType
+  name: SortEnumType
+}
+
+type CustomerDtoCollectionSegment {
+  items: [CustomerDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input BalanceTransactionDtoFilterInput {
+  and: [BalanceTransactionDtoFilterInput!]
+  or: [BalanceTransactionDtoFilterInput!]
+  id: StringOperationFilterInput
+  object: StringOperationFilterInput
+  amount: ComparableInt64OperationFilterInput
+  availableOn: ComparableDateTimeOperationFilterInput
+  created: ComparableDateTimeOperationFilterInput
+  currency: StringOperationFilterInput
+  description: StringOperationFilterInput
+  exchangeRate: ComparableNullableOfDecimalOperationFilterInput
+  fee: ComparableInt64OperationFilterInput
+  net: ComparableInt64OperationFilterInput
+  reportingCategory: StringOperationFilterInput
+  status: StringOperationFilterInput
+  type: StringOperationFilterInput
+}
+
+input BalanceTransactionDtoSortInput {
+  id: SortEnumType
+  object: SortEnumType
+  amount: SortEnumType
+  availableOn: SortEnumType
+  created: SortEnumType
+  currency: SortEnumType
+  description: SortEnumType
+  exchangeRate: SortEnumType
+  fee: SortEnumType
+  net: SortEnumType
+  reportingCategory: SortEnumType
+  status: SortEnumType
+  type: SortEnumType
+}
+
+type BalanceTransactionDtoCollectionSegment {
+  items: [BalanceTransactionDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input DisputeDtoFilterInput {
+  and: [DisputeDtoFilterInput!]
+  or: [DisputeDtoFilterInput!]
+  id: StringOperationFilterInput
+  object: StringOperationFilterInput
+  amount: ComparableNullableOfInt64OperationFilterInput
+  chargeId: StringOperationFilterInput
+  charge: ChargeDtoFilterInput
+  created: ComparableDateTimeOperationFilterInput
+  currency: StringOperationFilterInput
+  isChargeRefundable: BooleanOperationFilterInput
+  livemode: BooleanOperationFilterInput
+  metadata: DictionaryOfStringAndStringFilterInput
+  networkReasonCode: StringOperationFilterInput
+  paymentIntentId: StringOperationFilterInput
+  reason: StringOperationFilterInput
+  status: StringOperationFilterInput
+}
+
+input DisputeDtoSortInput {
+  id: SortEnumType
+  object: SortEnumType
+  amount: SortEnumType
+  chargeId: SortEnumType
+  charge: ChargeDtoSortInput
+  created: SortEnumType
+  currency: SortEnumType
+  isChargeRefundable: SortEnumType
+  livemode: SortEnumType
+  networkReasonCode: SortEnumType
+  paymentIntentId: SortEnumType
+  reason: SortEnumType
+  status: SortEnumType
+}
+
+type DisputeDtoCollectionSegment {
+  items: [DisputeDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input RefundDtoFilterInput {
+  and: [RefundDtoFilterInput!]
+  or: [RefundDtoFilterInput!]
+  id: StringOperationFilterInput
+  object: StringOperationFilterInput
+  amount: ComparableInt64OperationFilterInput
+  chargeId: StringOperationFilterInput
+  charge: ChargeDtoFilterInput
+  created: ComparableDateTimeOperationFilterInput
+  currency: StringOperationFilterInput
+  description: StringOperationFilterInput
+  failureBalanceTransactionId: StringOperationFilterInput
+  failureReason: StringOperationFilterInput
+  instructionsEmail: StringOperationFilterInput
+  metadata: DictionaryOfStringAndStringFilterInput
+  paymentIntentId: StringOperationFilterInput
+  reason: StringOperationFilterInput
+  receiptNumber: StringOperationFilterInput
+  sourceTransferReversalId: StringOperationFilterInput
+  status: StringOperationFilterInput
+  transferReversalId: StringOperationFilterInput
+}
+
+input RefundDtoSortInput {
+  id: SortEnumType
+  object: SortEnumType
+  amount: SortEnumType
+  chargeId: SortEnumType
+  charge: ChargeDtoSortInput
+  created: SortEnumType
+  currency: SortEnumType
+  description: SortEnumType
+  failureBalanceTransactionId: SortEnumType
+  failureReason: SortEnumType
+  instructionsEmail: SortEnumType
+  paymentIntentId: SortEnumType
+  reason: SortEnumType
+  receiptNumber: SortEnumType
+  sourceTransferReversalId: SortEnumType
+  status: SortEnumType
+  transferReversalId: SortEnumType
+}
+
+type RefundDtoCollectionSegment {
+  items: [RefundDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PlanDtoFilterInput {
+  and: [PlanDtoFilterInput!]
+  or: [PlanDtoFilterInput!]
+  id: StringOperationFilterInput
+  object: StringOperationFilterInput
+  active: BooleanOperationFilterInput
+  aggregateUsage: StringOperationFilterInput
+  amount: ComparableNullableOfInt64OperationFilterInput
+  amountDecimal: ComparableNullableOfDecimalOperationFilterInput
+  billingScheme: StringOperationFilterInput
+  created: ComparableDateTimeOperationFilterInput
+  currency: StringOperationFilterInput
+  deleted: BooleanOperationFilterInput
+  interval: StringOperationFilterInput
+  intervalCount: ComparableInt64OperationFilterInput
+  livemode: BooleanOperationFilterInput
+  metadata: DictionaryOfStringAndStringFilterInput
+  nickname: StringOperationFilterInput
+  productId: StringOperationFilterInput
+  tiersMode: StringOperationFilterInput
+  trialPeriodDays: ComparableNullableOfInt64OperationFilterInput
+  usageType: StringOperationFilterInput
+  product: ProductDtoFilterInput
+}
+
+input PlanDtoSortInput {
+  id: SortEnumType
+  object: SortEnumType
+  active: SortEnumType
+  aggregateUsage: SortEnumType
+  amount: SortEnumType
+  amountDecimal: SortEnumType
+  billingScheme: SortEnumType
+  created: SortEnumType
+  currency: SortEnumType
+  deleted: SortEnumType
+  interval: SortEnumType
+  intervalCount: SortEnumType
+  livemode: SortEnumType
+  nickname: SortEnumType
+  productId: SortEnumType
+  tiersMode: SortEnumType
+  trialPeriodDays: SortEnumType
+  usageType: SortEnumType
+  product: ProductDtoSortInput
+}
+
+type PlanDtoCollectionSegment {
+  items: [PlanDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PostCategoryFilterInput {
+  and: [PostCategoryFilterInput!]
+  or: [PostCategoryFilterInput!]
+  name: StringOperationFilterInput
+  posts: ListFilterInputTypeOfPostFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input PostCategorySortInput {
+  name: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type PostCategoryCollectionSegment {
+  items: [PostCategory]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input CommentFilterInput {
+  and: [CommentFilterInput!]
+  or: [CommentFilterInput!]
+  isFollower: BooleanOperationFilterInput
+  postId: ComparableInt32OperationFilterInput
+  post: PostFilterInput
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  parentId: ComparableNullableOfInt32OperationFilterInput
+  parent: CommentFilterInput
+  text: StringOperationFilterInput
+  children: ListFilterInputTypeOfCommentFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input CommentSortInput {
+  isFollower: SortEnumType
+  postId: SortEnumType
+  post: PostSortInput
+  userId: SortEnumType
+  user: UserSortInput
+  parentId: SortEnumType
+  parent: CommentSortInput
+  text: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type CommentCollectionSegment {
+  items: [Comment]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input SocialTagFilterInput {
+  and: [SocialTagFilterInput!]
+  or: [SocialTagFilterInput!]
+  title: StringOperationFilterInput
+  postTags: ListFilterInputTypeOfPostTagFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input SocialTagSortInput {
+  title: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type SocialTagCollectionSegment {
+  items: [SocialTag]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PostFilterInput {
+  and: [PostFilterInput!]
+  or: [PostFilterInput!]
+  imageUrl: StringOperationFilterInput
+  videoUrl: StringOperationFilterInput
+  description: StringOperationFilterInput
+  usedTags: StringOperationFilterInput
+  shareCount: ComparableInt32OperationFilterInput
+  postCategoryId: ComparableNullableOfInt32OperationFilterInput
+  postCategory: PostCategoryFilterInput
+  comments: ListFilterInputTypeOfCommentFilterInput
+  ratings: ListFilterInputTypeOfRatingFilterInput
+  postTags: ListFilterInputTypeOfPostTagFilterInput
+  ratingAverage: ComparableDoubleOperationFilterInput
+  posterId: ComparableInt32OperationFilterInput
+  poster: UserFilterInput
+  postedAt: ComparableDateTimeOperationFilterInput
+  likes: ListFilterInputTypeOfPostLikeFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input PostSortInput {
+  imageUrl: SortEnumType
+  videoUrl: SortEnumType
+  description: SortEnumType
+  usedTags: SortEnumType
+  shareCount: SortEnumType
+  postCategoryId: SortEnumType
+  postCategory: PostCategorySortInput
+  ratingAverage: SortEnumType
+  posterId: SortEnumType
+  poster: UserSortInput
+  postedAt: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type PostCollectionSegment {
+  items: [Post]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PostDtoFilterInput {
+  and: [PostDtoFilterInput!]
+  or: [PostDtoFilterInput!]
+  likesCount: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  postedAt: ComparableDateTimeOperationFilterInput
+  liked: BooleanOperationFilterInput
+  likes: ListFilterInputTypeOfPostLikeFilterInput
+}
+
+input PostDtoSortInput {
+  likesCount: SortEnumType
+  id: SortEnumType
+  postedAt: SortEnumType
+  liked: SortEnumType
+}
+
+type PostDtoCollectionSegment {
+  items: [PostDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input UserPhotoGalleryFilterInput {
+  and: [UserPhotoGalleryFilterInput!]
+  or: [UserPhotoGalleryFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  photoUrl: StringOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input UserPhotoGallerySortInput {
+  userId: SortEnumType
+  user: UserSortInput
+  photoUrl: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type UserPhotoGalleryCollectionSegment {
+  items: [UserPhotoGallery]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input VonageSessionFilterInput {
+  and: [VonageSessionFilterInput!]
+  or: [VonageSessionFilterInput!]
+  creatorId: ComparableInt32OperationFilterInput
+  creator: UserFilterInput
+  sessionId: StringOperationFilterInput
+  date: ComparableDateTimeOperationFilterInput
+  users: ListFilterInputTypeOfVonageSessionUserFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input VonageSessionSortInput {
+  creatorId: SortEnumType
+  creator: UserSortInput
+  sessionId: SortEnumType
+  date: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type VonageSessionCollectionSegment {
+  items: [VonageSession]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input VonageSessionUserFilterInput {
+  and: [VonageSessionUserFilterInput!]
+  or: [VonageSessionUserFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  vonageSessionId: ComparableInt32OperationFilterInput
+  vonageSession: VonageSessionFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input VonageSessionUserSortInput {
+  userId: SortEnumType
+  user: UserSortInput
+  vonageSessionId: SortEnumType
+  vonageSession: VonageSessionSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type VonageSessionUserCollectionSegment {
+  items: [VonageSessionUser]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input VonageMessageFilterInput {
+  and: [VonageMessageFilterInput!]
+  or: [VonageMessageFilterInput!]
+  senderId: ComparableInt32OperationFilterInput
+  sender: UserFilterInput
+  vonageSessionId: ComparableInt32OperationFilterInput
+  vonageSession: VonageSessionFilterInput
+  text: StringOperationFilterInput
+  attachment: StringOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input VonageMessageSortInput {
+  senderId: SortEnumType
+  sender: UserSortInput
+  vonageSessionId: SortEnumType
+  vonageSession: VonageSessionSortInput
+  text: SortEnumType
+  attachment: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type VonageMessageCollectionSegment {
+  items: [VonageMessage]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ComparableInt32OperationFilterInput {
+  eq: Int
+  neq: Int
+  in: [Int!]
+  nin: [Int!]
+  gt: Int
+  ngt: Int
+  gte: Int
+  ngte: Int
+  lt: Int
+  nlt: Int
+  lte: Int
+  nlte: Int
+}
+
+input VisitorFilterInput {
+  and: [VisitorFilterInput!]
+  or: [VisitorFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input HostFilterInput {
+  and: [HostFilterInput!]
+  or: [HostFilterInput!]
+  bookings: ListFilterInputTypeOfBookingFilterInput
+  workingHours: ListFilterInputTypeOfWorkingHoursFilterInput
+  holidays: ListFilterInputTypeOfHolidayFilterInput
+  userId: ComparableInt32OperationFilterInput
+  user: UserDefFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ComparableDateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime!]
+  nin: [DateTime!]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+input WorkingHoursFilterInput {
+  and: [WorkingHoursFilterInput!]
+  or: [WorkingHoursFilterInput!]
+  bookings: ListFilterInputTypeOfBookingFilterInput
+  hostId: ComparableInt32OperationFilterInput
+  host: HostFilterInput
+  dayOfWeek: DayOfWeekOperationFilterInput
+  startTime: ComparableTimeSpanOperationFilterInput
+  endTime: ComparableTimeSpanOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input BooleanOperationFilterInput {
+  eq: Boolean
+  neq: Boolean
+}
+
+input ComparableNullableOfDateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime]
+  nin: [DateTime]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+input VisitorSortInput {
+  userId: SortEnumType
+  user: UserSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+input HostSortInput {
+  userId: SortEnumType
+  user: UserDefSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+input WorkingHoursSortInput {
+  hostId: SortEnumType
+  host: HostSortInput
+  dayOfWeek: SortEnumType
+  startTime: SortEnumType
+  endTime: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type Booking {
+  visitorId: Int!
+  visitor: Visitor
+  hostId: Int!
+  host: Host
+  date: DateTime!
+  workingHourId: Int!
+  workingHour: WorkingHours
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+"""
+Information about the offset pagination.
+"""
+type CollectionSegmentInfo {
+  """
+  Indicates whether more items exist following the set defined by the clients arguments.
+  """
+  hasNextPage: Boolean!
+
+  """
+  Indicates whether more items exist prior the set defined by the clients arguments.
+  """
+  hasPreviousPage: Boolean!
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+input ListFilterInputTypeOfItemImageFilterInput {
+  all: ItemImageFilterInput
+  none: ItemImageFilterInput
+  some: ItemImageFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfItemSectionFilterInput {
+  all: ItemSectionFilterInput
+  none: ItemSectionFilterInput
+  some: ItemSectionFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfItemTagFilterInput {
+  all: ItemTagFilterInput
+  none: ItemTagFilterInput
+  some: ItemTagFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfShoppingCardDetailFilterInput {
+  all: ShoppingCardDetailFilterInput
+  none: ShoppingCardDetailFilterInput
+  some: ShoppingCardDetailFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfWishListFilterInput {
+  all: WishListFilterInput
+  none: WishListFilterInput
+  some: WishListFilterInput
+  any: Boolean
+}
+
+type Item {
+  title: String
+  price: Int!
+  description: String
+  discount: Int!
+  availableQuantity: Int!
+  itemImages: [ItemImage!]
+  itemSections: [ItemSection!]
+  iTemTags: [ItemTag!]
+  shoppingCardDetails: [ShoppingCardDetail!]
+  wishLists: [WishList!]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type ItemImage {
+  itemId: Int!
+  imageUrl: String
+  isMain: Boolean!
+  row: Int!
+  item: Item
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfItemSectionValueFilterInput {
+  all: ItemSectionValueFilterInput
+  none: ItemSectionValueFilterInput
+  some: ItemSectionValueFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfItemSectionAddOnFilterInput {
+  all: ItemSectionAddOnFilterInput
+  none: ItemSectionAddOnFilterInput
+  some: ItemSectionAddOnFilterInput
+  any: Boolean
+}
+
+type ItemSection {
+  itemId: Int!
+  name: String
+  isItemAddOns: Boolean!
+  row: Int!
+  item: Item
+  values: [ItemSectionValue!]
+  addOns: [ItemSectionAddOn!]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type ItemSectionValue {
+  itemSectionId: Int!
+  key: String
+  value: String
+  row: Int!
+  itemSection: ItemSection
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Tag {
+  title: String
+  itemTags: [ItemTag!]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfAddOnShoppingCardDetailFilterInput {
+  all: AddOnShoppingCardDetailFilterInput
+  none: AddOnShoppingCardDetailFilterInput
+  some: AddOnShoppingCardDetailFilterInput
+  any: Boolean
+}
+
+type ItemSectionAddOn {
+  itemSectionId: Int!
+  value: String
+  price: Int!
+  row: Int!
+  itemSection: ItemSection
+  addOnShoppingCardDetails: [AddOnShoppingCardDetail!]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ShoppingCardDetailFilterInput {
+  and: [ShoppingCardDetailFilterInput!]
+  or: [ShoppingCardDetailFilterInput!]
+  itemId: ComparableInt32OperationFilterInput
+  shoppingCardId: ComparableInt32OperationFilterInput
+  quantity: ComparableInt32OperationFilterInput
+  priceSum: ComparableInt32OperationFilterInput
+  finalPrice: ComparableInt32OperationFilterInput
+  item: ItemFilterInput
+  shoppingCard: ShoppingCardFilterInput
+  addOnShoppingCardDetails: ListFilterInputTypeOfAddOnShoppingCardDetailFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ShoppingCardDetailSortInput {
+  itemId: SortEnumType
+  shoppingCardId: SortEnumType
+  quantity: SortEnumType
+  priceSum: SortEnumType
+  finalPrice: SortEnumType
+  item: ItemSortInput
+  shoppingCard: ShoppingCardSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type AddOnShoppingCardDetail {
+  shoppingCardDetailId: Int!
+  itemSectionAddOnId: Int!
+  itemSectionAddOn: ItemSectionAddOn
+  shoppingCardDetail: ShoppingCardDetail
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ComparableDoubleOperationFilterInput {
+  eq: Float
+  neq: Float
+  in: [Float!]
+  nin: [Float!]
+  gt: Float
+  ngt: Float
+  gte: Float
+  ngte: Float
+  lt: Float
+  nlt: Float
+  lte: Float
+  nlte: Float
+}
+
+input NullableOfDeliveryTypeOperationFilterInput {
+  eq: DeliveryType
+  neq: DeliveryType
+  in: [DeliveryType]
+  nin: [DeliveryType]
+}
+
+input OrderStatusOperationFilterInput {
+  eq: OrderStatus
+  neq: OrderStatus
+  in: [OrderStatus!]
+  nin: [OrderStatus!]
+}
+
+type ShoppingCard {
+  userId: Int!
+  tax: Int!
+  purchasePrice: Int!
+  totalDiscount: Float!
+  subTotal: Int!
+  deliveryFee: Int!
+  purchasedDate: DateTime
+  deliveryType: DeliveryType
+  orderStatus: OrderStatus!
+  user: User
+  shoppingCardDetails: [ShoppingCardDetail!]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type WishList {
+  userId: Int!
+  itemId: Int!
+  user: User
+  item: Item
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input EventFilterInput {
+  and: [EventFilterInput!]
+  or: [EventFilterInput!]
+  title: StringOperationFilterInput
+  imageUrl: StringOperationFilterInput
+  ownerId: ComparableInt32OperationFilterInput
+  owner: UserFilterInput
+  eventTypeId: ComparableInt32OperationFilterInput
+  eventType: EventTypeFilterInput
+  description: StringOperationFilterInput
+  date: ComparableDateTimeOperationFilterInput
+  startTime: ComparableTimeSpanOperationFilterInput
+  endTime: ComparableTimeSpanOperationFilterInput
+  price: ComparableDecimalOperationFilterInput
+  currency: StringOperationFilterInput
+  state: StringOperationFilterInput
+  capacity: ComparableNullableOfInt32OperationFilterInput
+  participantsCount: ComparableInt32OperationFilterInput
+  isActive: BooleanOperationFilterInput
+  city: StringOperationFilterInput
+  streetAddress: StringOperationFilterInput
+  zipCode: StringOperationFilterInput
+  eventCategoryId: ComparableInt32OperationFilterInput
+  eventCategory: EventCategoryFilterInput
+  tickets: ListFilterInputTypeOfTicketFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input EventSortInput {
+  title: SortEnumType
+  imageUrl: SortEnumType
+  ownerId: SortEnumType
+  owner: UserSortInput
+  eventTypeId: SortEnumType
+  eventType: EventTypeSortInput
+  description: SortEnumType
+  date: SortEnumType
+  startTime: SortEnumType
+  endTime: SortEnumType
+  price: SortEnumType
+  currency: SortEnumType
+  state: SortEnumType
+  capacity: SortEnumType
+  participantsCount: SortEnumType
+  isActive: SortEnumType
+  city: SortEnumType
+  streetAddress: SortEnumType
+  zipCode: SortEnumType
+  eventCategoryId: SortEnumType
+  eventCategory: EventCategorySortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type EventDto {
+  event: Event!
+  isFavorite: Boolean!
+}
+
+input TicketFilterInput {
+  and: [TicketFilterInput!]
+  or: [TicketFilterInput!]
+  eventId: ComparableInt32OperationFilterInput
+  event: EventFilterInput
+  participantId: ComparableInt32OperationFilterInput
+  participant: UserFilterInput
+  seatNumber: ComparableInt32OperationFilterInput
+  price: ComparableDecimalOperationFilterInput
+  ticketStatus: TicketStatusOperationFilterInput
+  barcode: StringOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input TicketSortInput {
+  eventId: SortEnumType
+  event: EventSortInput
+  participantId: SortEnumType
+  participant: UserSortInput
+  seatNumber: SortEnumType
+  price: SortEnumType
+  ticketStatus: SortEnumType
+  barcode: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type TicketDto {
+  ticket: Ticket!
+  isFavorite: Boolean!
+}
+
+input ListFilterInputTypeOfEventFilterInput {
+  all: EventFilterInput
+  none: EventFilterInput
+  some: EventFilterInput
+  any: Boolean
+}
+
+type EventType {
+  typeTitle: String!
+  participants: [Event!]!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type EventCategory {
+  name: String!
+  photoUrl: String!
+  events: [Event!]!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type FavoriteEvent {
+  userId: Int!
+  user: User!
+  eventId: Int!
+  event: Event!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type FavoriteEventOrganizer {
+  userId: Int!
+  user: User!
+  organizerId: Int!
+  organizer: User!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type OrganizerDto {
+  user: User!
+  isFavorite: Boolean!
+}
+
+type UserFollower {
+  followerId: Int!
+  follower: User
+  followedId: Int!
+  followed: User
+  isMutual: Boolean!
+  followedAt: DateTime!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type SocialUserDto {
+  followersCount: Int!
+  followedCount: Int!
+  isFollowed: Boolean!
+}
+
+input ListFilterInputTypeOfUserFilterInput {
+  all: UserFilterInput
+  none: UserFilterInput
+  some: UserFilterInput
+  any: Boolean
+}
+
+type ConversationDto {
+  conversationId: Int!
+  isGroup: Boolean!
+  receiver(where: UserFilterInput): [User]
+  unreadCount: Int!
+  groupName: String
+  groupImgageUrl: String
+  latestMessageDate: DateTime!
+  lastMessage: Message
+}
+
+input ListFilterInputTypeOfUserFollowerFilterInput {
+  all: UserFollowerFilterInput
+  none: UserFollowerFilterInput
+  some: UserFollowerFilterInput
+  any: Boolean
+}
+
+input ComparableNullableOfInt32OperationFilterInput {
+  eq: Int
+  neq: Int
+  in: [Int]
+  nin: [Int]
+  gt: Int
+  ngt: Int
+  gte: Int
+  ngte: Int
+  lt: Int
+  nlt: Int
+  lte: Int
+  nlte: Int
+}
+
+type User {
+  address: String
+  socialSecurityNumber: String
+  followers: [UserFollower]
+  followees: [UserFollower]
+  externalId: String
+  email: String
+  photoUrl: String
+  fullName: String
+  phoneNumber: String
+  about: String
+  location: String
+  age: Int
+  dateOfBirth: DateTime
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ConversationFilterInput {
+  and: [ConversationFilterInput!]
+  or: [ConversationFilterInput!]
+  firstUserId: ComparableNullableOfInt32OperationFilterInput
+  firstUser: UserFilterInput
+  secondUserId: ComparableNullableOfInt32OperationFilterInput
+  secondUser: UserFilterInput
+  firstUnreadCount: ComparableInt32OperationFilterInput
+  secondUnreadCount: ComparableInt32OperationFilterInput
+  latestMessageDate: ComparableDateTimeOperationFilterInput
+  isGroup: BooleanOperationFilterInput
+  groupName: StringOperationFilterInput
+  groupDescription: StringOperationFilterInput
+  groupImgageUrl: StringOperationFilterInput
+  messages: ListFilterInputTypeOfMessageFilterInput
+  userGroups: ListFilterInputTypeOfUserMessageGroupFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ConversationSortInput {
+  firstUserId: SortEnumType
+  firstUser: UserSortInput
+  secondUserId: SortEnumType
+  secondUser: UserSortInput
+  firstUnreadCount: SortEnumType
+  secondUnreadCount: SortEnumType
+  latestMessageDate: SortEnumType
+  isGroup: SortEnumType
+  groupName: SortEnumType
+  groupDescription: SortEnumType
+  groupImgageUrl: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+input ComparableInt64OperationFilterInput {
+  eq: Long
+  neq: Long
+  in: [Long!]
+  nin: [Long!]
+  gt: Long
+  ngt: Long
+  gte: Long
+  ngte: Long
+  lt: Long
+  nlt: Long
+  lte: Long
+  nlte: Long
+}
+
+input ComparableNullableOfInt64OperationFilterInput {
+  eq: Long
+  neq: Long
+  in: [Long]
+  nin: [Long]
+  gt: Long
+  ngt: Long
+  gte: Long
+  ngte: Long
+  lt: Long
+  nlt: Long
+  lte: Long
+  nlte: Long
+}
+
+type ChargeDto {
+  id: String
+  amount: Long!
+  amountCaptured: Long!
+  amountRefunded: Long!
+  applicationId: String
+  applicationFeeId: String
+  applicationFeeAmount: Long
+  balanceTransactionId: String
+  currency: String
+  customerId: String
+  description: String
+  disputed: Boolean!
+  failureCode: String
+  failureMessage: String
+  invoiceId: String
+  livemode: Boolean!
+  receiptEmail: String
+  receiptNumber: String
+  receiptUrl: String
+  paymentIntentId: String
+  paymentMethod: String
+  paymentDate: DateTime!
+  entityId: Int
+}
+
+input AddressDtoFilterInput {
+  and: [AddressDtoFilterInput!]
+  or: [AddressDtoFilterInput!]
+  city: StringOperationFilterInput
+  country: StringOperationFilterInput
+  line1: StringOperationFilterInput
+  line2: StringOperationFilterInput
+  postalCode: StringOperationFilterInput
+  state: StringOperationFilterInput
+}
+
+input AddressDtoSortInput {
+  city: SortEnumType
+  country: SortEnumType
+  line1: SortEnumType
+  line2: SortEnumType
+  postalCode: SortEnumType
+  state: SortEnumType
+}
+
+type CustomerDto {
+  id: String
+  object: String
+  address: AddressDto
+  balance: Long!
+  created: DateTime!
+  currency: String
+  deleted: Boolean
+  description: String
+  email: String
+  invoicePrefix: String
+  livemode: Boolean!
+  name: String
+}
+
+input ComparableNullableOfDecimalOperationFilterInput {
+  eq: Decimal
+  neq: Decimal
+  in: [Decimal]
+  nin: [Decimal]
+  gt: Decimal
+  ngt: Decimal
+  gte: Decimal
+  ngte: Decimal
+  lt: Decimal
+  nlt: Decimal
+  lte: Decimal
+  nlte: Decimal
+}
+
+type BalanceTransactionDto {
+  id: String
+  object: String
+  amount: Long!
+  availableOn: DateTime!
+  created: DateTime!
+  currency: String
+  description: String
+  exchangeRate: Decimal
+  fee: Long!
+  net: Long!
+  reportingCategory: String
+  status: String
+  type: String
+}
+
+input DictionaryOfStringAndStringFilterInput {
+  and: [DictionaryOfStringAndStringFilterInput!]
+  or: [DictionaryOfStringAndStringFilterInput!]
+  comparer: IEqualityComparerOfStringFilterInput
+  count: ComparableInt32OperationFilterInput
+  keys: ListStringOperationFilterInput
+  values: ListStringOperationFilterInput
+}
+
+type DisputeDto {
+  id: String
+  object: String
+  amount: Long
+  chargeId: String
+  charge: ChargeDto
+  created: DateTime!
+  currency: String
+  isChargeRefundable: Boolean!
+  livemode: Boolean!
+  metadata: [KeyValuePairOfStringAndString!]
+  networkReasonCode: String
+  paymentIntentId: String
+  reason: String
+  status: String
+}
+
+type RefundDto {
+  id: String
+  object: String
+  amount: Long!
+  chargeId: String
+  charge: ChargeDto
+  created: DateTime!
+  currency: String
+  description: String
+  failureBalanceTransactionId: String
+  failureReason: String
+  instructionsEmail: String
+  metadata: [KeyValuePairOfStringAndString!]
+  paymentIntentId: String
+  reason: String
+  receiptNumber: String
+  sourceTransferReversalId: String
+  status: String
+  transferReversalId: String
+}
+
+input ProductDtoFilterInput {
+  and: [ProductDtoFilterInput!]
+  or: [ProductDtoFilterInput!]
+  id: StringOperationFilterInput
+  object: StringOperationFilterInput
+  active: BooleanOperationFilterInput
+  caption: StringOperationFilterInput
+  created: ComparableDateTimeOperationFilterInput
+  defaultPriceId: StringOperationFilterInput
+  deleted: BooleanOperationFilterInput
+  description: StringOperationFilterInput
+  images: ListStringOperationFilterInput
+  livemode: BooleanOperationFilterInput
+  metadata: DictionaryOfStringAndStringFilterInput
+  name: StringOperationFilterInput
+  shippable: BooleanOperationFilterInput
+  statementDescriptor: StringOperationFilterInput
+  type: StringOperationFilterInput
+  unitLabel: StringOperationFilterInput
+  updated: ComparableDateTimeOperationFilterInput
+  url: StringOperationFilterInput
+}
+
+input ProductDtoSortInput {
+  id: SortEnumType
+  object: SortEnumType
+  active: SortEnumType
+  caption: SortEnumType
+  created: SortEnumType
+  defaultPriceId: SortEnumType
+  deleted: SortEnumType
+  description: SortEnumType
+  livemode: SortEnumType
+  name: SortEnumType
+  shippable: SortEnumType
+  statementDescriptor: SortEnumType
+  type: SortEnumType
+  unitLabel: SortEnumType
+  updated: SortEnumType
+  url: SortEnumType
+}
+
+type PlanDto {
+  id: String
+  object: String
+  active: Boolean!
+  aggregateUsage: String
+  amount: Long
+  amountDecimal: Decimal
+  billingScheme: String
+  created: DateTime!
+  currency: String
+  deleted: Boolean
+  interval: String
+  intervalCount: Long!
+  livemode: Boolean!
+  metadata: [KeyValuePairOfStringAndString!]
+  nickname: String
+  productId: String
+  tiersMode: String
+  trialPeriodDays: Long
+  usageType: String
+  product: ProductDto
+}
+
+input ListFilterInputTypeOfPostFilterInput {
+  all: PostFilterInput
+  none: PostFilterInput
+  some: PostFilterInput
+  any: Boolean
+}
+
+type PostCategory {
+  name: String
+  posts: [Post]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfCommentFilterInput {
+  all: CommentFilterInput
+  none: CommentFilterInput
+  some: CommentFilterInput
+  any: Boolean
+}
+
+type Comment {
+  isFollower: Boolean!
+  postId: Int!
+  post: Post
+  userId: Int!
+  user: User
+  parentId: Int
+  parent: Comment
+  text: String
+  children: [Comment]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfPostTagFilterInput {
+  all: PostTagFilterInput
+  none: PostTagFilterInput
+  some: PostTagFilterInput
+  any: Boolean
+}
+
+type SocialTag {
+  title: String
+  postTags: [PostTag]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfRatingFilterInput {
+  all: RatingFilterInput
+  none: RatingFilterInput
+  some: RatingFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfPostLikeFilterInput {
+  all: PostLikeFilterInput
+  none: PostLikeFilterInput
+  some: PostLikeFilterInput
+  any: Boolean
+}
+
+type Post {
+  imageUrl: String
+  videoUrl: String
+  description: String
+  usedTags: String
+  shareCount: Int!
+  postCategoryId: Int
+  postCategory: PostCategory
+  comments: [Comment]
+  ratings: [Rating]
+  postTags: [PostTag]
+  ratingAverage: Float!
+  posterId: Int!
+  poster: User
+  postedAt: DateTime!
+  likes: [PostLike]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type PostDto {
+  likesCount: Int!
+  id: Int!
+  postedAt: DateTime!
+  liked: Boolean!
+  likes: [PostLike]
+}
+
+type UserPhotoGallery {
+  userId: Int!
+  user: User
+  photoUrl: String
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfVonageSessionUserFilterInput {
+  all: VonageSessionUserFilterInput
+  none: VonageSessionUserFilterInput
+  some: VonageSessionUserFilterInput
+  any: Boolean
+}
+
+type VonageSession {
+  creatorId: Int!
+  creator: User
+  sessionId: String
+  date: DateTime!
+  users: [VonageSessionUser]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type VonageSessionUser {
+  userId: Int!
+  user: User
+  vonageSessionId: Int!
+  vonageSession: VonageSession
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type VonageMessage {
+  senderId: Int!
+  sender: User
+  vonageSessionId: Int!
+  vonageSession: VonageSession
+  text: String
+  attachment: String
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfBookingFilterInput {
+  all: BookingFilterInput
+  none: BookingFilterInput
+  some: BookingFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfWorkingHoursFilterInput {
+  all: WorkingHoursFilterInput
+  none: WorkingHoursFilterInput
+  some: WorkingHoursFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfHolidayFilterInput {
+  all: HolidayFilterInput
+  none: HolidayFilterInput
+  some: HolidayFilterInput
+  any: Boolean
+}
+
+input UserDefFilterInput {
+  and: [UserDefFilterInput!]
+  or: [UserDefFilterInput!]
+  externalId: StringOperationFilterInput
+  email: StringOperationFilterInput
+  photoUrl: StringOperationFilterInput
+  fullName: StringOperationFilterInput
+  phoneNumber: StringOperationFilterInput
+  about: StringOperationFilterInput
+  location: StringOperationFilterInput
+  age: ComparableNullableOfInt32OperationFilterInput
+  dateOfBirth: ComparableNullableOfDateTimeOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input DayOfWeekOperationFilterInput {
+  eq: DayOfWeek
+  neq: DayOfWeek
+  in: [DayOfWeek!]
+  nin: [DayOfWeek!]
+}
+
+input ComparableTimeSpanOperationFilterInput {
+  eq: TimeSpan
+  neq: TimeSpan
+  in: [TimeSpan!]
+  nin: [TimeSpan!]
+  gt: TimeSpan
+  ngt: TimeSpan
+  gte: TimeSpan
+  ngte: TimeSpan
+  lt: TimeSpan
+  nlt: TimeSpan
+  lte: TimeSpan
+  nlte: TimeSpan
+}
+
+input UserDefSortInput {
+  externalId: SortEnumType
+  email: SortEnumType
+  photoUrl: SortEnumType
+  fullName: SortEnumType
+  phoneNumber: SortEnumType
+  about: SortEnumType
+  location: SortEnumType
+  age: SortEnumType
+  dateOfBirth: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+input ItemTagFilterInput {
+  and: [ItemTagFilterInput!]
+  or: [ItemTagFilterInput!]
+  tagId: ComparableInt32OperationFilterInput
+  itemId: ComparableInt32OperationFilterInput
+  tag: TagFilterInput
+  item: ItemFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ComparableDecimalOperationFilterInput {
+  eq: Decimal
+  neq: Decimal
+  in: [Decimal!]
+  nin: [Decimal!]
+  gt: Decimal
+  ngt: Decimal
+  gte: Decimal
+  ngte: Decimal
+  lt: Decimal
+  nlt: Decimal
+  lte: Decimal
+  nlte: Decimal
+}
+
+input ListFilterInputTypeOfTicketFilterInput {
+  all: TicketFilterInput
+  none: TicketFilterInput
+  some: TicketFilterInput
+  any: Boolean
+}
+
+input TicketStatusOperationFilterInput {
+  eq: TicketStatus
+  neq: TicketStatus
+  in: [TicketStatus!]
+  nin: [TicketStatus!]
+}
+
+input ListFilterInputTypeOfMessageFilterInput {
+  all: MessageFilterInput
+  none: MessageFilterInput
+  some: MessageFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfUserMessageGroupFilterInput {
+  all: UserMessageGroupFilterInput
+  none: UserMessageGroupFilterInput
+  some: UserMessageGroupFilterInput
+  any: Boolean
+}
+
+input IEqualityComparerOfStringFilterInput {
+  and: [IEqualityComparerOfStringFilterInput!]
+  or: [IEqualityComparerOfStringFilterInput!]
+}
+
+input ListStringOperationFilterInput {
+  all: StringOperationFilterInput
+  none: StringOperationFilterInput
+  some: StringOperationFilterInput
+  any: Boolean
+}
+
+input PostTagFilterInput {
+  and: [PostTagFilterInput!]
+  or: [PostTagFilterInput!]
+  postId: ComparableInt32OperationFilterInput
+  post: PostFilterInput
+  tagId: ComparableInt32OperationFilterInput
+  tag: SocialTagFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input RatingFilterInput {
+  and: [RatingFilterInput!]
+  or: [RatingFilterInput!]
+  postId: ComparableInt32OperationFilterInput
+  post: PostFilterInput
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  rating: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input PostLikeFilterInput {
+  and: [PostLikeFilterInput!]
+  or: [PostLikeFilterInput!]
+  isFollower: BooleanOperationFilterInput
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  postId: ComparableInt32OperationFilterInput
+  post: PostFilterInput
+  liked: BooleanOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input HolidayFilterInput {
+  and: [HolidayFilterInput!]
+  or: [HolidayFilterInput!]
+  hostId: ComparableInt32OperationFilterInput
+  host: HostFilterInput
+  date: ComparableDateTimeOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input UserMessageGroupFilterInput {
+  and: [UserMessageGroupFilterInput!]
+  or: [UserMessageGroupFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  conversationId: ComparableInt32OperationFilterInput
+  conversation: ConversationFilterInput
+  unreadCount: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+type UserMessageGroup {
+  userId: Int!
+  user: User
+  conversationId: Int!
+  conversation: Conversation
+  unreadCount: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+"""
+The `DateTime` scalar represents an ISO-8601 compliant date time type.
+"""
+scalar DateTime
+
+type SocialEngagmentDto {
+  postId: Int!
+  shareCount: Int!
+  commentCount: Int!
+  likeCount: Int!
+  accountReached: Int!
+  accountReachedFromFollowers: Int!
+  accountEngaged: Int!
+  accountEngagedFromFollowers: Int!
+  accountReachFromProfile: Int!
+  accountReachFromHome: Int!
+  accountReachFromHashtag: Int!
+  accountReachFromOther: Int!
+}
+
+type AccountDto {
+  id: String
+  object: String
+  businessType: String
+  chargesEnabled: Boolean!
+  country: String
+  created: DateTime!
+  defaultCurrency: String
+  deleted: Boolean
+  detailsSubmitted: Boolean!
+  email: String
+  payoutsEnabled: Boolean!
+  type: String
+}
+
+type BalanceDto {
+  object: String
+  available: [BalanceAmountDto]
+  connectReserved: [BalanceAmountDto]
+  pending: [BalanceAmountDto]
+}
+
+"""
+The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+"""
+The built-in `Decimal` scalar type.
+"""
+scalar Decimal
+
+type Visitor {
+  userId: Int!
+  user: User
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type VonageTokenDtoDef {
+  sessionId: String
+  apiKey: Int!
+  token: String
+}
+
+type Host {
+  bookings: [Booking]
+  workingHours: [WorkingHours]
+  holidays: [Holiday]
+  userId: Int!
+  user: UserDef
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type WorkingHours {
+  bookings: [Booking]
+  hostId: Int!
+  host: Host
+  dayOfWeek: DayOfWeek!
+  startTime: TimeSpan!
+  endTime: TimeSpan!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type AddressDto {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+}
+
+type ItemTag {
+  tagId: Int!
+  itemId: Int!
+  tag: Tag
+  item: Item
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type SMS {
+  fromNumber: String!
+  toNumber: String!
+  text: String!
+  sid: String!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type ShoppingCardDetail {
+  itemId: Int!
+  shoppingCardId: Int!
+  quantity: Int!
+  priceSum: Int!
+  finalPrice: Int!
+  item: Item
+  shoppingCard: ShoppingCard
+  addOnShoppingCardDetails: [AddOnShoppingCardDetail!]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+enum DeliveryType {
+  POST
+  DELIVERY
+  PICK_UP
+}
+
+type PostTag {
+  postId: Int!
+  post: Post
+  tagId: Int!
+  tag: SocialTag
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Rating {
+  postId: Int!
+  post: Post
+  userId: Int!
+  user: User
+  rating: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PURCHASED
+  CANCELLED
+  PACKING
+  SENT
+  DELIVERED
+}
+
+type TransferDto {
+  id: String
+  object: String
+  amount: Long!
+  amountReversed: Long!
+  balanceTransactionId: String
+  created: DateTime!
+  currency: String
+  description: String
+  destinationId: String
+  destination: AccountDto
+  destinationPaymentId: String
+  destinationPayment: ChargeDto
+  livemode: Boolean!
+  metadata: [KeyValuePairOfStringAndString!]
+  reversed: Boolean!
+  sourceTransactionId: String
+  sourceTransaction: ChargeDto
+  sourceType: String
+  transferGroup: String
+}
+
+type MintNft {
+  mediaUrl: String
+  itemName: String
+  externalLink: String
+  collection: String
+  price: Decimal!
+  isMinted: Boolean!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type KeyValuePairOfStringAndString {
+  key: String!
+  value: String!
+}
+
+type EventRating {
+  userId: Int!
+  user: User!
+  eventId: Int!
+  event: Event!
+  rate: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type ProductDto {
+  id: String
+  object: String
+  active: Boolean!
+  caption: String
+  created: DateTime!
+  defaultPriceId: String
+  deleted: Boolean
+  description: String
+  images: [String]
+  livemode: Boolean!
+  metadata: [KeyValuePairOfStringAndString!]
+  name: String
+  shippable: Boolean
+  statementDescriptor: String
+  type: String
+  unitLabel: String
+  updated: DateTime!
+  url: String
+}
+
+type PostLike {
+  isFollower: Boolean!
+  userId: Int!
+  user: User
+  postId: Int!
+  post: Post
+  liked: Boolean!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+enum TicketStatus {
+  UPCOMING
+  COMPLETED
+  CANCELED
+}
+
+type Ticket {
+  eventId: Int!
+  event: Event!
+  participantId: Int!
+  participant: User!
+  seatNumber: Int!
+  price: Decimal!
+  ticketStatus: TicketStatus!
+  barcode: String!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Email {
+  toEmailAddress: String!
+  toName: String
+  subject: String!
+  plainTextContent: String!
+  htmlContent: String
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Event {
+  title: String!
+  imageUrl: String!
+  ownerId: Int!
+  owner: User!
+  eventTypeId: Int!
+  eventType: EventType!
+  description: String!
+  date: DateTime!
+  startTime: TimeSpan!
+  endTime: TimeSpan!
+  price: Decimal!
+  currency: String!
+  state: String!
+  capacity: Int
+  participantsCount: Int!
+  isActive: Boolean!
+  city: String!
+  streetAddress: String!
+  zipCode: String!
+  eventCategoryId: Int!
+  eventCategory: EventCategory!
+  tickets: [Ticket!]!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+"""
+The `TimeSpan` scalar represents an ISO-8601 compliant duration type.
+"""
+scalar TimeSpan
+
+type UserDef {
+  externalId: String
+  email: String
+  photoUrl: String
+  fullName: String
+  phoneNumber: String
+  about: String
+  location: String
+  age: Int
+  dateOfBirth: DateTime
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Holiday {
+  hostId: Int!
+  host: Host
+  date: DateTime!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type BalanceAmountDto {
+  amount: Long!
+  currency: String
+}

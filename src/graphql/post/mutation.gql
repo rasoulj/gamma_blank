@@ -1,0 +1,22 @@
+# mutation post_createPost($input: PostInput!) {
+#   post_createPost(input: $input) {
+#     status
+#     result {
+#       mediaUrl
+#     }
+#   }
+# }
+
+# mutation userLike_likePost($postId: Int!) {
+#   userLike_likePost(postId: $postId) {
+#     code
+#     value
+#   }
+# }
+
+# mutation userLike_disLikePost($postId: Int!) {
+#   userLike_disLikePost(postId: $postId) {
+#     code
+#     value
+#   }
+# }

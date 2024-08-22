@@ -1,0 +1,60 @@
+query getUserMessages {
+  message_getUserMessages {
+    status
+    result {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+      totalCount
+      items {
+        unreadCount
+        conversationId
+        isGroup
+        groupName
+        groupImgageUrl
+        latestMessageDate
+        lastMessage {
+          createdAt
+          createdDate
+          conversationId
+          conversation {
+            firstUserId
+            secondUserId
+            id
+            createdDate
+            firstUser {
+              fullName
+              phoneNumber
+              about
+              email
+              id
+            }
+            secondUser {
+              fullName
+              phoneNumber
+              about
+              email
+              id
+            }
+            messages {
+              createdAt
+              createdDate
+              conversationId
+              senderId
+              text
+            }
+          }
+        }
+        receiver {
+          fullName
+          phoneNumber
+          email
+          id
+          isDeleted
+          createdDate
+        }
+      }
+    }
+  }
+}

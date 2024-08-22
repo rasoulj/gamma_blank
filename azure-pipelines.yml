@@ -1,0 +1,96 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'macos-latest'
+
+jobs:
+  - job: IOS_AND_ANDROID_BUILD
+    timeoutInMinutes: 0 # how long to run the job before automatically cancelling (0 for maximum)
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '14.x'
+        displayName: 'Install Node.js'
+
+      - task: Npm@1
+        displayName: 'npm install --legacy-peer-deps'
+        inputs:
+          command: custom
+          verbose: false
+          customCommand: 'install --legacy-peer-deps'
+
+      #IOS
+
+      # - task: ios-bundle-version@1
+      #   displayName: 'Bump iOS version'
+      #   inputs:
+      #     sourcePath: 'ios/Asociar/Info.plist'
+      #     versionCodeOption: 'buildid'
+      #     versionCode: '$(Build.BuildId)'
+      #     versionName: '2.2.1'
+      #     printFile: false
+
+      - task: InstallAppleCertificate@2
+        displayName: Install Apple Certificate
+        inputs:
+          certSecureFile: 'c.p12'
+          certPwd: '$(cpass)'
+          keychain: 'temp'
+          deleteCert: true
+
+      - task: InstallAppleProvisioningProfile@1
+        displayName: 'Install Apple Provisioning Profile'
+        inputs:
+          provisioningProfileLocation: 'sourceRepository'
+          provProfileSourceRepository: 'AsociarAppstore.mobileprovision'
+          removeProfile: false
+
+      - task: CocoaPods@0
+        displayName: 'Install CocoaPods'
+        inputs:
+          workingDirectory: 'ios'
+
+      - script: |
+          sudo xcode-select -s /Applications/Xcode_13.4.app
+        displayName: Selects a specific version of Xcode
+
+      - task: Xcode@5
+        displayName: 'Build IPA'
+        inputs:
+          actions: 'build'
+          configuration: 'Release'
+          sdk: 'iphoneos'
+          xcWorkspacePath: 'ios/Asociar.xcworkspace'
+          scheme: 'Asociar'
+          packageApp: true
+          exportPath: 'output'
+          signingOption: 'manual'
+          signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+          provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
+
+      - task: CopyFiles@2
+        displayName: 'Copy IPA'
+        inputs:
+          contents: '**/*.ipa'
+          targetFolder: '$(build.artifactStagingDirectory)'
+          overWrite: true
+          flattenFolders: true
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish IPA to artifacts'
+        inputs:
+          PathtoPublish: '$(build.artifactStagingDirectory)'
+          ArtifactName: 'ios'
+          publishLocation: 'Container'
+
+      # - task: AppCenterDistribute@3
+      #   displayName: 'Upload IPA to AppCenter'
+      #   inputs:
+      #     serverEndpoint: 'IOSToken'
+      #     appSlug: 'apsy-internal/beauty-1'
+      #     appFile: 'output/*.ipa'
+      #     symbolsOption: 'Apple'
+      #     releaseNotesOption: 'input'
+      #     releaseNotesInput: 'Chime Beauty'
+      #     destinationType: 'groups'

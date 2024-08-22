@@ -1,0 +1,30 @@
+# subscription chatMessageAdded($userId: Int!) {
+#   chatMessageAdded(userId: $userId) {
+#     userDirectMessageId
+#     ownerId
+#     content
+#     userDirectMessage {
+#       senderUserId
+#       reciverUserId
+#       id
+#       isDeleted
+#       createdDate
+#       lastModifiedDate
+#     }
+#     owner {
+#       fullName
+#       bio
+#       photoUrl
+#       externalId
+#       email
+#       id
+#       isDeleted
+#       createdDate
+#       lastModifiedDate
+#     }
+#     id
+#     isDeleted
+#     createdDate
+#     lastModifiedDate
+#   }
+# }

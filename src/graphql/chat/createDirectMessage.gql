@@ -1,0 +1,17 @@
+mutation createDirectMessage($text:String!, $conversationId: Int!, $receiverId: Int!){
+ message_createDirectMessage(input: {
+   text: $text, conversationId:$conversationId
+ }, receiverId: $receiverId) {
+   status
+   result {
+     id
+     createdAt
+     createdDate
+     conversation {
+       messages{
+         text
+       }
+     } 
+   }
+ }
+}
